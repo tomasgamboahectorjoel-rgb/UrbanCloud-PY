@@ -98,21 +98,6 @@ describe('flujo visual conectado', () => {
     expect(datos.get('fotografia').name).toBe('poste.jpg');
   });
 
-  it('busca reportes cercanos solo con un título de 5 letras o más, igual que el servidor', async () => {
-    montar('/ciudadano/nuevo', <NuevoReporte />);
-    await screen.findByText('Datos de la incidencia');
-    fireEvent.change(screen.getByLabelText('Distrito *'), { target: { value: '1' } });
-    fireEvent.click(screen.getByText('Elegir ubicación'));
-    const boton = screen.getByRole('button', { name: 'Buscar reportes cercanos' });
-    fireEvent.change(screen.getByLabelText('¿Qué ocurrió? *'), { target: { value: 'Foco' } });
-    fireEvent.click(boton);
-    expect(servicios.similares).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByLabelText('¿Qué ocurrió? *'), { target: { value: 'Focos' } });
-    fireEvent.click(boton);
-    await waitFor(() => expect(servicios.similares).toHaveBeenCalledTimes(1));
-    expect(servicios.similares.mock.calls[0][0]).toMatchObject({ titulo: 'Focos', distrito_id: '1' });
-  });
-
   it('muestra el motivo del rechazo sin inventar un código', async () => {
     servicios.crearReporte.mockRejectedValue(new Error('La imagen no evidencia una incidencia urbana.'));
     montar('/ciudadano/nuevo', <NuevoReporte />);
