@@ -29,6 +29,9 @@ class Ajustes(BaseModel):
     db_pool_size: int = Field(default=5, ge=1, le=100)
     db_max_overflow: int = Field(default=10, ge=0, le=100)
     db_pool_timeout: int = Field(default=30, ge=1, le=120)
+    resend_api_key: str = ""
+    email_from: str = "UrbanCloud AI <verificacion@correo.urbancloudai.site>"
+    public_frontend_url: str = "http://localhost:5173"
 
     @property
     def secure_cookies(self) -> bool:
@@ -49,6 +52,12 @@ def ajustes() -> Ajustes:
         raise RuntimeError("Producción requiere PostgreSQL con psycopg.")
     if "*" in config.frontend_origin:
         raise RuntimeError("FRONTEND_ORIGIN debe indicar orígenes exactos.")
+    if config.app_env == "production" and not config.public_frontend_url.startswith("https://"):
+        raise RuntimeError("PUBLIC_FRONTEND_URL debe usar HTTPS en producción.")
+    if config.app_env != "production" and not config.public_frontend_url.startswith(
+        ("https://", "http://localhost:", "http://127.0.0.1:")
+    ):
+        raise RuntimeError("PUBLIC_FRONTEND_URL debe usar HTTPS o localhost.")
     if config.cookie_samesite not in {"lax", "strict", "none"}:
         raise RuntimeError("COOKIE_SAMESITE no válido.")
     if config.cookie_samesite == "none" and not config.secure_cookies:

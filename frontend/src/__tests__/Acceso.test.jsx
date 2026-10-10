@@ -40,21 +40,21 @@ describe('acceso y navegación por rol', () => {
     expect(sesion.iniciar).toHaveBeenCalledWith('supervisor@example.test', 'ClaveSegura123');
   });
 
-  it('completa el dominio y muestra un error claro si falla el ingreso', async () => {
+  it('usa el correo completo y muestra un error claro si falla el ingreso', async () => {
     sesion.iniciar.mockRejectedValue(new Error('Las credenciales no son válidas o la cuenta está inactiva.'));
     render(<MemoryRouter><PaginaAcceso /></MemoryRouter>);
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana@gmail.com' } });
     fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'incorrecta' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
     await waitFor(() => expect(screen.getByText('Las credenciales no son válidas o la cuenta está inactiva.')).toBeTruthy());
-    expect(sesion.iniciar).toHaveBeenCalledWith('ana@urbancloudai.com', 'incorrecta');
+    expect(sesion.iniciar).toHaveBeenCalledWith('ana@gmail.com', 'incorrecta');
   });
 
   it('limpia el error y los campos al pasar de un login fallido al registro', async () => {
     const mensaje = 'Las credenciales no son válidas o la cuenta está inactiva.';
     sesion.iniciar.mockRejectedValue(new Error(mensaje));
     render(<MemoryRouter initialEntries={['/login']}><Aplicacion /></MemoryRouter>);
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'admin' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'admin@gmail.com' } });
     fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'incorrecta' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
     await screen.findByText(mensaje);
@@ -69,23 +69,23 @@ describe('acceso y navegación por rol', () => {
   });
 
   it('registra en tres pasos y muestra la cuenta creada sin iniciar sesión', async () => {
-    sesion.registrar.mockResolvedValue({ rol: 'Ciudadano' });
+    sesion.registrar.mockResolvedValue({ usuario: { rol: 'Ciudadano' }, correo_verificacion_enviado: true });
     render(<MemoryRouter initialEntries={['/registro']}><Routes>
       <Route path="/registro" element={<PaginaAcceso registro />} />
       <Route path="/login" element={<div>Pantalla de ingreso</div>} />
     </Routes></MemoryRouter>);
     fireEvent.change(screen.getByLabelText('Nombres'), { target: { value: 'Ana' } });
     fireEvent.change(screen.getByLabelText('Apellidos'), { target: { value: 'Pérez' } });
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana@gmail.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'ClaveSegura123' } });
     fireEvent.change(screen.getByLabelText('Confirmar contraseña'), { target: { value: 'ClaveSegura123' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-    expect(screen.getByText('ana@urbancloudai.com')).toBeTruthy();
+    expect(screen.getByText('ana@gmail.com')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }));
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Cuenta creada' })).toBeTruthy());
     expect(sesion.registrar).toHaveBeenCalledWith({
-      nombre: 'Ana Pérez', email: 'ana@urbancloudai.com',
+      nombre: 'Ana Pérez', email: 'ana@gmail.com',
       password: 'ClaveSegura123', password_confirmation: 'ClaveSegura123',
     });
     fireEvent.click(screen.getByRole('link', { name: 'Ir a iniciar sesión' }));
@@ -98,12 +98,12 @@ describe('acceso y navegación por rol', () => {
     fireEvent.change(screen.getByLabelText('Apellidos'), { target: { value: 'Pérez' } });
     fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'hector@a' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-    expect(screen.getByText('Escribe un usuario válido antes de @urbancloudai.com, sin @ ni puntos consecutivos.')).toBeTruthy();
+    expect(screen.getByText('Escribe un correo completo y válido, por ejemplo nombre@gmail.com.')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Crear cuenta' })).toBeTruthy();
     expect(sesion.registrar).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'hector..perez' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'hector..perez@gmail.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-    expect(screen.getByText('Escribe un usuario válido antes de @urbancloudai.com, sin @ ni puntos consecutivos.')).toBeTruthy();
+    expect(screen.getByText('Escribe un correo completo y válido, por ejemplo nombre@gmail.com.')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Crear cuenta' })).toBeTruthy();
   });
 
@@ -111,7 +111,7 @@ describe('acceso y navegación por rol', () => {
     render(<MemoryRouter><PaginaAcceso registro /></MemoryRouter>);
     fireEvent.change(screen.getByLabelText('Nombres'), { target: { value: 'Ana' } });
     fireEvent.change(screen.getByLabelText('Apellidos'), { target: { value: 'Pérez' } });
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana@gmail.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     const clave = screen.getByLabelText('Contraseña');
     const confirmacion = screen.getByLabelText('Confirmar contraseña');
@@ -136,14 +136,14 @@ describe('acceso y navegación por rol', () => {
     render(<MemoryRouter><PaginaAcceso registro /></MemoryRouter>);
     fireEvent.change(screen.getByLabelText('Nombres'), { target: { value: 'Ana' } });
     fireEvent.change(screen.getByLabelText('Apellidos'), { target: { value: 'Pérez' } });
-    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana@gmail.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'ClaveSegura123' } });
     fireEvent.change(screen.getByLabelText('Confirmar contraseña'), { target: { value: 'ClaveSegura123' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
     fireEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }));
     await waitFor(() => expect(screen.getByText('Este correo ya está registrado. Inicia sesión o usa otro correo.')).toBeTruthy());
-    expect(screen.getByLabelText('Correo').value).toBe('ana');
+    expect(screen.getByLabelText('Correo').value).toBe('ana@gmail.com');
     expect(screen.getByRole('heading', { name: 'Crear cuenta' })).toBeTruthy();
   });
 
