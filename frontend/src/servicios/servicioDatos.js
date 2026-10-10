@@ -32,6 +32,7 @@ export const servicioDatos = {
   usuarios: (filtros = {}, pagina = 1) => servicioHttp.obtener(`/administracion/usuarios?${new URLSearchParams({ ...filtros, page: pagina })}`),
   crearUsuario: (datos) => servicioHttp.publicar('/administracion/usuarios', datos),
   cambiarUsuario: (id, activo) => servicioHttp.cambiar(`/administracion/usuarios/${id}/estado`, { activo }),
+  restablecerClaveUsuario: (id, datos) => servicioHttp.cambiar(`/administracion/usuarios/${id}/clave`, datos),
   configuracion: () => servicioHttp.obtener('/administracion/configuracion'),
   guardarConfiguracion: (datos) => servicioHttp.cambiar('/administracion/configuracion', datos),
   auditoria: (pagina = 1) => servicioHttp.obtener(`/administracion/auditoria?page=${pagina}`),

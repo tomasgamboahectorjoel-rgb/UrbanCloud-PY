@@ -63,6 +63,22 @@ afterEach(() => {
 });
 
 describe('flujo visual conectado', () => {
+  it('explica lo que falta y confirma cuando la búsqueda cercana no encuentra reportes', async () => {
+    montar('/ciudadano/nuevo', <NuevoReporte />);
+    await screen.findByText('Datos de la incidencia');
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar reportes cercanos' }));
+    expect(screen.getByText('Selecciona la ubicación del incidente en el mapa.')).toBeTruthy();
+    fireEvent.click(screen.getByText('Elegir ubicación'));
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar reportes cercanos' }));
+    expect(screen.getByText('Selecciona un distrito para buscar reportes cercanos.')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Distrito *'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar reportes cercanos' }));
+    expect(screen.getByText('Escribe al menos 4 caracteres en «¿Qué ocurrió?» para buscar reportes cercanos.')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('¿Qué ocurrió? *'), { target: { value: 'Bache' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar reportes cercanos' }));
+    await screen.findByText('No encontramos reportes similares cerca de la ubicación seleccionada.');
+  });
+
   it.each([
     [20, 'Ubicación detectada. Verifica que el pin marque el lugar del incidente.'],
     [500, 'Tu ubicación podría no ser precisa. Mueve el pin hasta el lugar del incidente antes de enviar.'],

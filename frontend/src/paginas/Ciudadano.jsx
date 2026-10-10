@@ -51,6 +51,7 @@ export function NuevoReporte() {
   const [avisoUbicacion, establecerAvisoUbicacion] = useState(null);
   const [fotografia, establecerFotografia] = useState(null);
   const [similares, establecerSimilares] = useState([]);
+  const [resultadoBusqueda, establecerResultadoBusqueda] = useState('');
   const [buscando, establecerBuscando] = useState(false);
   const [omitir, establecerOmitir] = useState(false);
   const [fase, establecerFase] = useState('');
@@ -75,6 +76,7 @@ export function NuevoReporte() {
             : { tipo: 'advertencia', mensaje: 'Tu ubicación podría no ser precisa. Mueve el pin hasta el lugar del incidente antes de enviar.' }
           : { tipo: 'advertencia', mensaje: 'No pudimos comprobar la precisión de tu ubicación. Verifica y ajusta el pin antes de enviar.' });
         establecerSimilares([]);
+        establecerResultadoBusqueda('');
         establecerBuscandoUbicacion(false);
       },
       (error) => {
@@ -91,12 +93,22 @@ export function NuevoReporte() {
   }
 
   async function buscarSimilares() {
-    if (!formulario.distrito_id || !ubicacion || formulario.titulo.trim().length < 4) return;
+    establecerMensaje('');
+    establecerResultadoBusqueda('');
+    if (!ubicacion) { establecerMensaje('Selecciona la ubicación del incidente en el mapa.'); return; }
+    if (!formulario.distrito_id) { establecerMensaje('Selecciona un distrito para buscar reportes cercanos.'); return; }
+    if (formulario.titulo.trim().length < 4) {
+      establecerMensaje('Escribe al menos 4 caracteres en «¿Qué ocurrió?» para buscar reportes cercanos.');
+      return;
+    }
     establecerBuscando(true);
     try {
       const respuesta = await servicioDatos.similares({ titulo: formulario.titulo,
         distrito_id: formulario.distrito_id, latitud: ubicacion[0], longitud: ubicacion[1] });
       establecerSimilares(respuesta.datos || []);
+      establecerResultadoBusqueda(respuesta.busqueda_activa === false
+        ? 'La búsqueda de reportes similares está desactivada en este momento.'
+        : respuesta.datos?.length ? '' : 'No encontramos reportes similares cerca de la ubicación seleccionada.');
       establecerOmitir(false);
     } catch (fallo) { establecerMensaje(fallo.message); }
     finally { establecerBuscando(false); }
@@ -132,12 +144,12 @@ export function NuevoReporte() {
         <Aviso mensaje={mensaje} tipo="error" />
         <form className="formulario" onSubmit={enviar}>
           <label className="campo"><span>¿Qué ocurrió? *</span><input required maxLength={90} value={formulario.titulo}
-            onChange={(evento) => establecerFormulario({ ...formulario, titulo: evento.target.value })} placeholder="Ej. Poste de luz apagado" /></label>
+            onChange={(evento) => { establecerFormulario({ ...formulario, titulo: evento.target.value }); establecerResultadoBusqueda(''); }} placeholder="Ej. Poste de luz apagado" /></label>
           <label className="campo"><span>Describe el problema *</span><textarea required minLength={15} maxLength={800}
             value={formulario.descripcion} onChange={(evento) => establecerFormulario({ ...formulario, descripcion: evento.target.value })}
             placeholder="¿Qué observaste?" /></label>
           <div className="formulario-dos"><label className="campo"><span>Distrito *</span><select required value={formulario.distrito_id}
-            onChange={(evento) => establecerFormulario({ ...formulario, distrito_id: evento.target.value })}>
+            onChange={(evento) => { establecerFormulario({ ...formulario, distrito_id: evento.target.value }); establecerResultadoBusqueda(''); }}>
             <option value="">Selecciona un distrito</option>{catalogos?.distritos?.map((distrito) =>
               <option key={distrito.id} value={distrito.id}>{distrito.nombre}</option>)}</select></label>
             <label className="campo"><span>Dirección o referencia *</span><input required maxLength={255} value={formulario.direccion}
@@ -154,13 +166,15 @@ export function NuevoReporte() {
             alCambiar={(latitud, longitud) => {
               establecerUbicacion([latitud, longitud]);
               establecerSimilares([]);
+              establecerResultadoBusqueda('');
               establecerErrorUbicacion('');
               establecerAvisoUbicacion(null);
             }} />
           {avisoUbicacion && <Aviso mensaje={avisoUbicacion.mensaje} tipo={avisoUbicacion.tipo} />}
           {ubicacion && <small className="muted">Coordenadas: {ubicacion.map((valor) => valor.toFixed(5)).join(', ')}</small>}
-          <button type="button" className="btn btn-secondary" onClick={buscarSimilares} disabled={buscando || !ubicacion}>
+          <button type="button" className="btn btn-secondary" onClick={buscarSimilares} disabled={buscando}>
             <Search size={17} aria-hidden="true" />{buscando ? 'Buscando…' : 'Buscar reportes cercanos'}</button>
+          {resultadoBusqueda && <Aviso mensaje={resultadoBusqueda} />}
           {similares.length > 0 && !omitir && <div className="aviso aviso-advertencia"><strong>Posibles reportes cercanos</strong>
             {similares.map((incidencia) => <div className="coincidencia" key={incidencia.id}>
               <span>{incidencia.codigo} · {incidencia.titulo} · {incidencia.distancia_metros} m</span>
