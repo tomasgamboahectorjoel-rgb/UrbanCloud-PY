@@ -21,5 +21,10 @@
     "jsdom": "30.1.1",
     "vite": "8.3.1",
     "vitest": "5.0.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "source-map-js": ">=1.2.2 <2"
+    }
   }
 }
