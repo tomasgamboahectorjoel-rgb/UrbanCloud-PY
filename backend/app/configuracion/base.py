@@ -12,11 +12,22 @@ class Base(DeclarativeBase):
     pass
 
 
+def argumentos_conexion(url: str) -> dict:
+    """Argumentos del conector segun la base de datos.
+
+    En PostgreSQL se desactivan las sentencias preparadas del servidor (prepare_threshold=None):
+    el pooler transaccional de Supabase multiplexa clientes sobre las mismas conexiones reales y,
+    con ellas activas, falla con DuplicatePreparedStatement / InvalidSqlStatementName.
+    """
+    if url.startswith("sqlite"):
+        return {"check_same_thread": False}
+    return {"prepare_threshold": None}
+
+
 @lru_cache
 def motor():
     url = ajustes().database_url
-    argumentos = {"check_same_thread": False} if url.startswith("sqlite") else {}
-    return create_engine(url, pool_pre_ping=True, connect_args=argumentos)
+    return create_engine(url, pool_pre_ping=True, connect_args=argumentos_conexion(url))
 
 
 def sesion_bd():
