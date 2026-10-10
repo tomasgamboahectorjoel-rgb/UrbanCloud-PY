@@ -1,10 +1,11 @@
 import io
+from datetime import timedelta
 
 from PIL import Image
 from sqlalchemy import func, select
 
 from app.modelos.dominio import (
-    Auditoria, EvidenciaIncidencia, Incidencia, Notificacion, ValidacionReporte,
+    Auditoria, EvidenciaIncidencia, Incidencia, Notificacion, Usuario, ValidacionReporte, ahora,
 )
 from app.servicios.ia import ErrorIntegracionIA
 from tests.conftest import csrf, login
@@ -22,6 +23,29 @@ def registrar_ciudadano(cliente, nombre="ana"):
                              json={"nombre": nombre.title(), "email": f"{nombre}@urbancloudai.com",
                                    "password": "Clave1234!", "password_confirmation": "Clave1234!"})
     assert respuesta.status_code == 201, respuesta.text
+
+
+def test_similares_encuentra_un_reporte_antiguo_con_plural(entorno):
+    cliente, fabrica, _ = entorno
+    registrar_ciudadano(cliente)
+    login(cliente, "ana@urbancloudai.com")
+    with fabrica() as db:
+        ciudadano = db.scalar(select(Usuario).where(Usuario.email == "ana@urbancloudai.com"))
+        base = dict(ciudadano_id=ciudadano.id, descripcion="Descripción del reporte.",
+                    estado_id=1, distrito_id=1, direccion="Av. Principal")
+        db.add(Incidencia(**base, codigo="ANTIGUO", titulo="Bache profundo",
+                          latitud=-9.0747, longitud=-78.5934,
+                          created_at=ahora() - timedelta(days=365)))
+        db.add_all(Incidencia(**base, codigo=f"LEJANO-{numero}", titulo="Baches en otra zona",
+                              latitud=-9.5, longitud=-78.9)
+                   for numero in range(105))
+        db.commit()
+    respuesta = cliente.get("/incidencias/similares", params={
+        "titulo": "Baches grandes", "distrito_id": 1,
+        "latitud": -9.0747, "longitud": -78.5934,
+    })
+    assert respuesta.status_code == 200
+    assert [item["codigo"] for item in respuesta.json()["datos"]] == ["ANTIGUO"]
 
 
 def crear_incidente(cliente, cabeceras):

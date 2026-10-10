@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import {
   ArrowRightLeft, Bell, CirclePlus, ClipboardList, FileSearch, History,
-  House, LayoutDashboard, List, ListChecks, LogOut, Settings,
+  House, LayoutDashboard, List, ListChecks, LogOut, Settings, KeyRound,
   TriangleAlert, Users,
 } from 'lucide-react';
 import { usarSesion } from '../contexto/Sesion';
@@ -16,6 +16,7 @@ const menus = {
     ['/ciudadano/nuevo', 'Nuevo reporte', CirclePlus],
     ['/ciudadano/reportes', 'Mis reportes', List],
     ['/ciudadano/seguidas', 'En seguimiento', ListChecks],
+    ['/cuenta', 'Mi cuenta', KeyRound],
     ['/notificaciones', 'Notificaciones', Bell],
   ],
   Operador: [
@@ -43,6 +44,7 @@ const menus = {
     ['/administrador/usuarios', 'Usuarios y roles', Users],
     ['/administrador/configuracion', 'Configuración', Settings],
     ['/administrador/auditoria', 'Auditoría', FileSearch],
+    ['/cuenta', 'Mi cuenta', KeyRound],
     ['/notificaciones', 'Notificaciones', Bell],
   ],
 };

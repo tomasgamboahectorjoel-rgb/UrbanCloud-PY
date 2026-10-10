@@ -16,7 +16,10 @@ def test_registro_login_renovacion_logout_y_rol(entorno):
     assert duplicado.status_code == 422
     assert "registrado" in duplicado.json()["mensaje"]
     assert cliente.post("/registro", headers=cabeceras,
-                        json={**datos, "email": "ana@gmail.com"}).status_code == 422
+                        json={**datos, "email": "ana@gmail.com"}).status_code == 201
+    for correo_malo in ("hector@a", "hector@ga", "hector@g", "hector..perez@gmail.com"):
+        assert cliente.post("/registro", headers=cabeceras,
+                            json={**datos, "email": correo_malo}).status_code == 422
 
     cabeceras = login(cliente, "ana@urbancloudai.com")
     assert cliente.get("/dashboard").json()["destino"] == "/ciudadano"

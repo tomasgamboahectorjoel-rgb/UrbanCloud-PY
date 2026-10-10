@@ -12,7 +12,11 @@ from app.repositorios.consultas import iso, pagina
 from app.seguridad.sesiones import exigir_rol, hash_clave
 
 router = APIRouter(prefix="/administracion", dependencies=[Depends(exigir_rol("Administrador"))])
-DOMINIO = re.compile(r"^[A-Za-z0-9_+\-]+(?:\.[A-Za-z0-9_+\-]+)*@urbancloudai\.com$", re.I)
+CORREO_VALIDO = re.compile(
+    r"^[A-Za-z0-9_+%-]+(?:\.[A-Za-z0-9_+%-]+)*@"
+    r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+"
+    r"[A-Za-z]{2,63}$", re.I,
+)
 
 
 class NuevoUsuario(BaseModel):
@@ -27,6 +31,11 @@ class NuevoUsuario(BaseModel):
 
 class EstadoUsuario(BaseModel):
     activo: bool
+
+
+class RestablecerClave(BaseModel):
+    password: str = Field(min_length=8, max_length=255)
+    password_confirmation: str
 
 
 class Configuracion(BaseModel):
@@ -59,8 +68,8 @@ def usuarios(buscar: str | None = Query(default=None, max_length=90), rol_id: in
 @router.post("/usuarios", status_code=201)
 def crear_usuario(datos: NuevoUsuario, db: Session = Depends(sesion_bd)):
     correo = datos.email.strip().lower()
-    if not DOMINIO.fullmatch(correo):
-        raise HTTPException(422, "Usa un correo válido de @urbancloudai.com.")
+    if not CORREO_VALIDO.fullmatch(correo):
+        raise HTTPException(422, "Escribe un correo completo y válido, por ejemplo nombre@gmail.com.")
     if datos.password != datos.password_confirmation:
         raise HTTPException(422, "Las contraseñas no coinciden.")
     rol = db.get(Rol, datos.rol_id)
@@ -95,6 +104,29 @@ def estado_usuario(usuario_id: int, datos: EstadoUsuario,
     db.commit()
     return {"mensaje": "Usuario activado." if datos.activo else "Usuario desactivado.",
             "usuario": _resumen(db, usuario)}
+
+
+@router.patch("/usuarios/{usuario_id}/clave")
+def restablecer_clave(usuario_id: int, datos: RestablecerClave,
+                     actor: Usuario = Depends(exigir_rol("Administrador")),
+                     db: Session = Depends(sesion_bd)):
+    usuario = db.get(Usuario, usuario_id)
+    if usuario is None:
+        raise HTTPException(404, "No encontramos lo que buscas.")
+    rol = db.get(Rol, usuario.rol_id)
+    if rol is None or rol.nombre not in {"Operador", "Supervisor", "Personal técnico"}:
+        raise HTTPException(403, "Solo puedes restablecer contraseñas del personal interno.")
+    if datos.password != datos.password_confirmation:
+        raise HTTPException(422, "Las contraseñas no coinciden.")
+    usuario.password = hash_clave(datos.password)
+    from app.modelos.dominio import SesionRenovacion, ahora
+    db.query(SesionRenovacion).filter(SesionRenovacion.usuario_id == usuario.id,
+                                      SesionRenovacion.revocada_en.is_(None)).update(
+        {"revocada_en": ahora()}, synchronize_session=False)
+    db.add(Auditoria(usuario_id=actor.id, accion="clave_personal_restablecida",
+                     entidad="usuarios", entidad_id=str(usuario.id)))
+    db.commit()
+    return {"mensaje": "Contraseña del trabajador actualizada."}
 
 
 @router.get("/configuracion")

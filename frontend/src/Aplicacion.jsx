@@ -8,6 +8,7 @@ import { PanelSupervisor, ListaSupervisor, EquipoSupervisor, DetalleSupervisor }
 import { PanelTecnico, DetalleTecnico } from './paginas/Tecnico';
 import { PanelAdministrador, UsuariosAdministrador, ConfiguracionAdministrador, AuditoriaAdministrador } from './paginas/Administrador';
 import { PaginaNotificaciones } from './paginas/Notificaciones';
+import { MiCuenta, OlvideClave, RestablecerClave, VerificarCorreo } from './paginas/Cuenta';
 
 export function RutaProtegida({ roles, children }) {
   const { usuario, cargando } = usarSesion();
@@ -36,8 +37,12 @@ export function Aplicacion() {
     <Route path="/" element={<Inicio />} />
     <Route path="/login" element={<AccesoPublico />} />
     <Route path="/registro" element={<AccesoPublico registro />} />
+    <Route path="/olvide-clave" element={<OlvideClave />} />
+    <Route path="/restablecer-clave" element={<RestablecerClave />} />
+    <Route path="/verificar-correo" element={<VerificarCorreo />} />
     <Route element={<RutaProtegida><Marco /></RutaProtegida>}>
       <Route path="/notificaciones" element={<PaginaNotificaciones />} />
+      <Route path="/cuenta" element={<RutaProtegida roles={['Ciudadano', 'Administrador']}><MiCuenta /></RutaProtegida>} />
       <Route path="/ciudadano" element={<RutaProtegida roles={['Ciudadano']}><PanelCiudadano /></RutaProtegida>} />
       <Route path="/ciudadano/nuevo" element={<RutaProtegida roles={['Ciudadano']}><NuevoReporte /></RutaProtegida>} />
       <Route path="/ciudadano/reportes" element={<RutaProtegida roles={['Ciudadano']}><ListaCiudadano /></RutaProtegida>} />

@@ -1,6 +1,7 @@
 import math
 import re
 import uuid
+import unicodedata
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import JSONResponse
@@ -20,6 +21,20 @@ from app.servicios.ia import ErrorIntegracionIA
 from app.servicios.incidencias import crear_reporte, LIMITE_IMAGEN
 
 router = APIRouter(dependencies=[Depends(exigir_rol("Ciudadano"))])
+
+
+def _terminos(titulo: str) -> set[str]:
+    """Normaliza acentos y plurales simples para la alerta orientativa."""
+    sin_acentos = "".join(letra for letra in unicodedata.normalize("NFD", titulo.lower())
+                          if unicodedata.category(letra) != "Mn")
+    resultado = set()
+    for palabra in re.findall(r"[a-z0-9]+", sin_acentos):
+        if len(palabra) < 4:
+            continue
+        if palabra.endswith("s") and len(palabra) > 4:
+            palabra = palabra[:-1]
+        resultado.add(palabra)
+    return resultado
 
 
 class MotivoRevision(BaseModel):
@@ -75,31 +90,37 @@ def seguidas(buscar: str | None = Query(default=None, max_length=90), estado: st
 
 
 @router.get("/incidencias/similares")
-def similares(titulo: str = Query(min_length=5, max_length=90), distrito_id: int = Query(),
+def similares(titulo: str = Query(min_length=4, max_length=90), distrito_id: int = Query(),
               latitud: float = Query(ge=-90, le=90), longitud: float = Query(ge=-180, le=180),
               db: Session = Depends(sesion_bd)):
     config = db.scalar(select(ConfiguracionSistema.valor)
                        .where(ConfiguracionSistema.clave == "ALERTAS_DUPLICADOS_ACTIVAS"))
     if config != "true":
-        return {"datos": []}
-    terminos = {p for p in re.split(r"\W+", titulo.lower()) if len(p) >= 4}
+        return {"datos": [], "busqueda_activa": False}
+    terminos = _terminos(titulo)
     cerrado = db.scalar(select(EstadoIncidencia.id).where(EstadoIncidencia.nombre == "Cerrado"))
-    consulta = select(Incidencia).where(Incidencia.distrito_id == distrito_id,
-                                        Incidencia.latitud.is_not(None), Incidencia.longitud.is_not(None),
-                                        Incidencia.estado_id != cerrado).order_by(Incidencia.created_at.desc()).limit(100)
+    # Primero se acota por coordenadas; ningún reporte antiguo cercano queda fuera.
+    delta_latitud = 320 / 110_000
+    delta_longitud = 320 / max(1, 110_000 * math.cos(math.radians(latitud)))
+    consulta = select(Incidencia).where(
+        Incidencia.distrito_id == distrito_id,
+        Incidencia.latitud.between(latitud - delta_latitud, latitud + delta_latitud),
+        Incidencia.longitud.between(longitud - delta_longitud, longitud + delta_longitud),
+        Incidencia.estado_id != cerrado,
+    ).order_by(Incidencia.created_at.desc())
     encontrados = []
     for item in db.scalars(consulta):
         lat1, lon1, lat2, lon2 = map(math.radians, [latitud, longitud, float(item.latitud), float(item.longitud)])
         distancia = 2 * 6371000 * math.asin(min(1, math.sqrt(
             math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2)))
-        palabras = {p for p in re.split(r"\W+", item.titulo.lower()) if len(p) >= 4}
+        palabras = _terminos(item.titulo)
         if distancia <= 300 and terminos & palabras:
             encontrados.append({"id": str(item.id), "codigo": item.codigo, "titulo": item.titulo,
                                 "estado": db.get(EstadoIncidencia, item.estado_id).nombre,
                                 "distancia_metros": round(distancia)})
         if len(encontrados) == 5:
             break
-    return {"datos": encontrados}
+    return {"datos": encontrados, "busqueda_activa": True}
 
 
 @router.get("/incidencias/seguidas/{incidencia_id}")

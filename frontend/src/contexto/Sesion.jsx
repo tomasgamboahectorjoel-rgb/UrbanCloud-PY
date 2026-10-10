@@ -43,8 +43,7 @@ export function ProveedorSesion({ children }) {
   };
 
   const registrar = async (datosRegistro) => {
-    const datos = await servicioHttp.publicar('/registro', datosRegistro);
-    return datos.usuario;
+    return servicioHttp.publicar('/registro', datosRegistro);
   };
 
   const salir = async () => {

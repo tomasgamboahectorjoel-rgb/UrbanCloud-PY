@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { Plus, SlidersHorizontal, UserCheck, UserX } from 'lucide-react';
+import { KeyRound, Plus, SlidersHorizontal, UserCheck, UserX } from 'lucide-react';
 import { Aviso, Encabezado, Estado, TarjetasResumen } from '../componentes/Estado';
 import { Paginacion } from '../componentes/Paginacion';
 import { usarDatos } from '../hooks/usarDatos';
@@ -30,18 +30,17 @@ export function PanelAdministrador() {
 }
 
 function FormularioUsuario({ catalogos, alCompletar }) {
-  const [datos, establecerDatos] = useState({ nombre: '', usuarioCorreo: '', password: '', password_confirmation: '', rol_id: '', area_id: '' });
+  const [datos, establecerDatos] = useState({ nombre: '', email: '', password: '', password_confirmation: '', rol_id: '', area_id: '' });
   const [error, establecerError] = useState('');
   const [enviando, establecerEnviando] = useState(false);
   const rol = catalogos.roles.find((item) => String(item.id) === datos.rol_id)?.nombre;
   async function enviar(evento) {
     evento.preventDefault(); establecerError(''); establecerEnviando(true);
     try {
-      const { usuarioCorreo, ...campos } = datos;
-      await servicioDatos.crearUsuario({ ...campos, email: `${usuarioCorreo.trim().toLowerCase()}@urbancloudai.com`,
+      await servicioDatos.crearUsuario({ ...datos, email: datos.email.trim().toLowerCase(),
         rol_id: Number(datos.rol_id),
         area_id: rol === 'Personal técnico' ? Number(datos.area_id) : null });
-      establecerDatos({ nombre: '', usuarioCorreo: '', password: '', password_confirmation: '', rol_id: '', area_id: '' });
+      establecerDatos({ nombre: '', email: '', password: '', password_confirmation: '', rol_id: '', area_id: '' });
       alCompletar();
     } catch (fallo) { establecerError(fallo.message); }
     finally { establecerEnviando(false); }
@@ -51,11 +50,10 @@ function FormularioUsuario({ catalogos, alCompletar }) {
       <label className="campo"><span>Nombre</span><input required type="text" value={datos.nombre}
         onChange={(evento) => establecerDatos({ ...datos, nombre: evento.target.value })} /></label>
       <label className="campo"><span>Correo</span>
-        <span className="correo-interno"><input required type="text" aria-label="Correo" autoComplete="off" autoCapitalize="none"
-          spellCheck="false" pattern="[A-Za-z0-9._+-]+" title="Escribe solo el nombre antes de @urbancloudai.com"
-          placeholder="nombre.apellido" value={datos.usuarioCorreo}
-          onChange={(evento) => establecerDatos({ ...datos, usuarioCorreo: evento.target.value.split('@')[0] })} />
-          <span aria-hidden="true">@urbancloudai.com</span></span></label>
+        <input required type="email" autoComplete="off" autoCapitalize="none"
+          spellCheck="false" placeholder="nombre@ejemplo.com" value={datos.email}
+          onChange={(evento) => establecerDatos({ ...datos, email: evento.target.value })} />
+      </label>
       {[['password', 'Contraseña'], ['password_confirmation', 'Confirmar contraseña']].map(([clave, etiqueta]) =>
         <label className="campo" key={clave}><span>{etiqueta}</span><input required type="password" value={datos[clave]}
           onChange={(evento) => establecerDatos({ ...datos, [clave]: evento.target.value })} /></label>)}
@@ -79,10 +77,26 @@ export function UsuariosAdministrador() {
   const { datos, cargando, error, recargar } = usarDatos(() => servicioDatos.usuarios(aplicados, pagina), [JSON.stringify(aplicados), pagina]);
   const { datos: catalogos } = usarDatos(servicioDatos.catalogos, []);
   const [mensaje, establecerMensaje] = useState('');
+  const [trabajadorClave, establecerTrabajadorClave] = useState(null);
+  const [claves, establecerClaves] = useState({ password: '', password_confirmation: '' });
+  const [errorClave, establecerErrorClave] = useState('');
   async function cambiar(usuario) {
     try { await servicioDatos.cambiarUsuario(usuario.id, !usuario.activo);
       establecerMensaje('Estado actualizado.'); recargar(); }
     catch (fallo) { establecerMensaje(fallo.message); }
+  }
+  async function restablecerClave(evento) {
+    evento.preventDefault();
+    if (claves.password !== claves.password_confirmation) {
+      establecerErrorClave('Las contraseñas no coinciden.'); return;
+    }
+    try {
+      const respuesta = await servicioDatos.restablecerClaveUsuario(trabajadorClave.id, claves);
+      establecerMensaje(respuesta.mensaje);
+      establecerTrabajadorClave(null);
+      establecerClaves({ password: '', password_confirmation: '' });
+      establecerErrorClave('');
+    } catch (fallo) { establecerErrorClave(fallo.message); }
   }
   return <><Encabezado seccion="ADMINISTRADOR" titulo="Usuarios y roles" />
     <Aviso mensaje={mensaje} />
@@ -103,7 +117,35 @@ export function UsuariosAdministrador() {
           <td>{usuario.rol}</td><td>{usuario.area || '—'}</td><td>{usuario.activo ? 'Activo' : 'Inactivo'}</td>
           <td><button className="enlace-tabla" onClick={() => cambiar(usuario)}>
             {usuario.activo ? <UserX size={15} aria-hidden="true" /> : <UserCheck size={15} aria-hidden="true" />}
-            {usuario.activo ? 'Desactivar' : 'Activar'}</button></td></tr>)}</tbody></table></div>
+            {usuario.activo ? 'Desactivar' : 'Activar'}</button>
+            {['Operador', 'Supervisor', 'Personal técnico'].includes(usuario.rol) &&
+              <button type="button" className="enlace-tabla" onClick={() => {
+                establecerTrabajadorClave(usuario);
+                establecerMensaje('');
+                establecerErrorClave('');
+                establecerClaves({ password: '', password_confirmation: '' });
+              }}>
+                <KeyRound size={15} aria-hidden="true" /> Restablecer clave</button>}</td></tr>)}</tbody></table></div>
+      {trabajadorClave && <div className="modal-fondo" onMouseDown={(evento) => {
+        if (evento.target === evento.currentTarget) establecerTrabajadorClave(null);
+      }}>
+        <section className="tarjeta padding modal-clave" role="dialog" aria-modal="true"
+          aria-labelledby="titulo-restablecer-clave" onKeyDown={(evento) => {
+            if (evento.key === 'Escape') establecerTrabajadorClave(null);
+          }}>
+          <h2 id="titulo-restablecer-clave">Contraseña de {trabajadorClave.nombre}</h2>
+          <p className="descripcion">El trabajador deberá usar la nueva contraseña en su próximo ingreso. Sus sesiones actuales se cerrarán.</p>
+          <Aviso mensaje={errorClave} tipo="error" />
+          <form className="formulario" onSubmit={restablecerClave}>
+            <label className="campo"><span>Nueva contraseña</span><input type="password" required minLength={8} autoFocus
+              value={claves.password} onChange={(evento) => establecerClaves({ ...claves, password: evento.target.value })} /></label>
+            <label className="campo"><span>Confirmar contraseña</span><input type="password" required minLength={8}
+              value={claves.password_confirmation} onChange={(evento) => establecerClaves({ ...claves, password_confirmation: evento.target.value })} /></label>
+            <div className="acciones-encabezado"><button className="btn btn-primary">Guardar contraseña</button>
+              <button type="button" className="btn btn-secondary" onClick={() => establecerTrabajadorClave(null)}>Cancelar</button></div>
+          </form>
+        </section>
+      </div>}
       <Paginacion datos={datos} alCambiar={establecerPagina} />
     </Estado></div>{catalogos && <FormularioUsuario catalogos={catalogos} alCompletar={() => { establecerMensaje('Usuario creado.'); recargar(); }} />}</div>
   </>;

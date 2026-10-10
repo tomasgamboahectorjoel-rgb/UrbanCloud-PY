@@ -97,6 +97,17 @@ class Usuario(ConFechas, Base):
     remember_token: Mapped[str | None] = mapped_column(String(100))
 
 
+class TokenCorreo(Base):
+    __tablename__ = "tokens_correo"
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), index=True)
+    proposito: Mapped[str] = mapped_column(String(20))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    vence_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    usado_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=ahora)
+
+
 class Incidencia(ConFechas, Base):
     __tablename__ = "incidencias"
     __table_args__ = (
