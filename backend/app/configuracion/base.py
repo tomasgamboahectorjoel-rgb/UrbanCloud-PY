@@ -24,10 +24,19 @@ def argumentos_conexion(url: str) -> dict:
     return {"prepare_threshold": None}
 
 
+def opciones_motor(url: str, config) -> dict:
+    """Opciones de create_engine. El tamaño del grupo de conexiones solo aplica a PostgreSQL."""
+    opciones = {"pool_pre_ping": True, "connect_args": argumentos_conexion(url)}
+    if not url.startswith("sqlite"):
+        opciones.update(pool_size=config.db_pool_size, max_overflow=config.db_max_overflow,
+                        pool_timeout=config.db_pool_timeout)
+    return opciones
+
+
 @lru_cache
 def motor():
-    url = ajustes().database_url
-    return create_engine(url, pool_pre_ping=True, connect_args=argumentos_conexion(url))
+    config = ajustes()
+    return create_engine(config.database_url, **opciones_motor(config.database_url, config))
 
 
 def sesion_bd():
