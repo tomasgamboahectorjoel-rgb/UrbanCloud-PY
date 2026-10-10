@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://urban-cloud-py-2ju9.vercel.app/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
