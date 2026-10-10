@@ -14,7 +14,9 @@ def test_administracion_usuarios_configuracion_y_auditoria(entorno):
     assert creado.status_code == 201, creado.text
     assert creado.json()["usuario"]["rol"] == "Personal técnico"
     assert cliente.post("/administracion/usuarios", headers=cabeceras,
-                        json={**datos, "email": "nuevo@gmail.com"}).status_code == 422
+                        json={**datos, "email": "nuevo@gmail.com"}).status_code == 201
+    assert cliente.post("/administracion/usuarios", headers=cabeceras,
+                        json={**datos, "email": "nuevo@ga"}).status_code == 422
     assert cliente.post("/administracion/usuarios", headers=cabeceras, json=datos).status_code == 422
     assert cliente.patch("/administracion/usuarios/1/estado", headers=cabeceras,
                          json={"activo": False}).status_code == 422

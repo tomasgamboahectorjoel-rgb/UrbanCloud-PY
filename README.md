@@ -27,7 +27,9 @@ python -m venv .venv
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-En esta copia de trabajo, `backend/.env` ya contiene la conexión PostgreSQL y los parámetros de IA trasladados del Laravel original, además de una clave nueva para FastAPI. Está ignorado por Git y no debe reemplazarse con `.env.example`. La base PostgreSQL compartida ya recibió la línea base Alembic y la tabla adicional `sesiones_renovacion`; no vuelvas a aplicar el procedimiento inicial de migración. El código no crea tablas automáticamente. No usar la base real para tests automatizados.
+En esta copia de trabajo, `backend/.env` ya contiene la conexión PostgreSQL y los parámetros de IA trasladados del Laravel original, además de una clave nueva para FastAPI. Está ignorado por Git y no debe reemplazarse con `.env.example`. La base PostgreSQL compartida ya recibió las migraciones hasta `0003_tokens_correo`; las únicas tablas adicionales son `sesiones_renovacion` y `tokens_correo`. No vuelvas a aplicar el procedimiento inicial de migración. El código no crea tablas automáticamente. No usar la base real para tests automatizados.
+
+Para verificar correos y recuperar contraseñas, coloca tu clave de Resend en `backend/.env` como `RESEND_API_KEY=...`. La variable ya está creada y vacía; no pegues la clave en el frontend ni en Git. El remitente configurado es `UrbanCloud AI <verificacion@correo.urbancloudai.site>`. En local, `PUBLIC_FRONTEND_URL=http://127.0.0.1:5173` abre los enlaces en Vite. En producción configura esas mismas variables en el backend desplegado y usa `PUBLIC_FRONTEND_URL=https://www.urbancloudai.site`; en el despliegue de respaldo usa la URL correspondiente de `urbancloudai.online`. Si no hay clave o el proveedor falla, el registro sigue funcionando y avisa que el correo no pudo enviarse.
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
@@ -62,6 +64,7 @@ pnpm audit
 ## Comportamiento conservado
 
 - Registro público solo Ciudadano; usuarios internos solo Administración.
+- El registro ciudadano admite correos completos de cualquier dominio con sintaxis válida; la propiedad del buzón se confirma por enlace. Solo un ciudadano con correo verificado puede recuperar automáticamente una contraseña olvidada. Ciudadanos y administradores pueden cambiar su propia clave; el administrador puede restablecer la del personal interno.
 - Reportes con imagen JPG/PNG de hasta 3 MiB; avances técnicos permiten también WebP y hasta 5 MiB.
 - Clasificador externo recibe base64 puro, título y descripción; IA inválida no crea incidencia ni código.
 - Estados, asignaciones, historial, revisión solicitada, notificaciones y auditoría.

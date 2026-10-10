@@ -145,4 +145,4 @@ def csrf_valido(cookie: str | None, cabecera: str | None) -> bool:
 
 def resumen_usuario(db: Session, usuario: Usuario) -> dict:
     return {"id": usuario.id, "nombre": usuario.nombre, "correo": usuario.email,
-            "rol": rol_usuario(db, usuario)}
+            "rol": rol_usuario(db, usuario), "correo_verificado": bool(usuario.email_verified_at)}
