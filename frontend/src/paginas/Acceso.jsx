@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, ArrowRight, Check, CircleCheck, Eye, EyeOff, LockKeyhole,
   Mail, MapPin, ShieldCheck, UserRound,
@@ -7,12 +7,7 @@ import {
 import { rutasPorRol, usarSesion } from '../contexto/Sesion';
 import { Aviso } from '../componentes/Estado';
 
-const dominio = '@urbancloudai.com';
-
-function correoCompleto(usuario) {
-  const valor = usuario.trim();
-  return valor.includes('@') ? valor.toLowerCase() : `${valor.toLowerCase()}${dominio}`;
-}
+const correoValido = /^[A-Za-z0-9_+%-]+(?:\.[A-Za-z0-9_+%-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/i;
 
 function MarcaAcceso() {
   return (
@@ -29,10 +24,10 @@ function CampoCorreo({ id, valor, alCambiar }) {
       <label htmlFor={id}>Correo</label>
       <div className="control-acceso control-correo">
         <Mail size={17} aria-hidden="true" />
-        <input id={id} name="correo" type="text" required autoComplete="username"
+        <input id={id} name="correo" type="email" required autoComplete="email"
           value={valor} onChange={(evento) => alCambiar(evento.target.value)}
-          placeholder="juan.perez" spellCheck="false" autoCapitalize="none" />
-        {!valor.includes('@') && <span className="dominio-correo">{dominio}</span>}
+          placeholder="juan.perez@gmail.com"
+          spellCheck="false" autoCapitalize="none" />
       </div>
     </div>
   );
@@ -106,6 +101,7 @@ function IndicadoresClave({ clave }) {
 export function PaginaAcceso({ registro = false }) {
   const { iniciar, registrar } = usarSesion();
   const navegar = useNavigate();
+  const ubicacion = useLocation();
   const [error, establecerError] = useState('');
   const [cargando, establecerCargando] = useState(false);
   const [paso, establecerPaso] = useState(1);
@@ -115,6 +111,7 @@ export function PaginaAcceso({ registro = false }) {
   const [clave, establecerClave] = useState('');
   const [confirmacion, establecerConfirmacion] = useState('');
   const [correoCreado, establecerCorreoCreado] = useState('');
+  const [verificacionEnviada, establecerVerificacionEnviada] = useState(false);
 
   async function ingresar(evento) {
     evento.preventDefault();
@@ -123,13 +120,17 @@ export function PaginaAcceso({ registro = false }) {
       establecerError('Ingresa tu correo electrónico.');
       return;
     }
+    if (!correoValido.test(correo.trim())) {
+      establecerError('Escribe un correo completo y válido, por ejemplo nombre@gmail.com.');
+      return;
+    }
     if (!clave) {
       establecerError('Ingresa tu contraseña.');
       return;
     }
     establecerCargando(true);
     try {
-      const usuario = await iniciar(correoCompleto(correo), clave);
+      const usuario = await iniciar(correo.trim().toLowerCase(), clave);
       navegar(rutasPorRol[usuario.rol], { replace: true });
     } catch (fallo) {
       establecerError(fallo.message);
@@ -149,8 +150,8 @@ export function PaginaAcceso({ registro = false }) {
       establecerError('Ingresa tu correo.');
       return;
     }
-    if (!/^[A-Za-z0-9_+-]+(?:\.[A-Za-z0-9_+-]+)*$/.test(correo.trim())) {
-      establecerError('Escribe un usuario válido antes de @urbancloudai.com, sin @ ni puntos consecutivos.');
+    if (!correoValido.test(correo.trim())) {
+      establecerError('Escribe un correo completo y válido, por ejemplo nombre@gmail.com.');
       return;
     }
     establecerPaso(2);
@@ -181,15 +182,16 @@ export function PaginaAcceso({ registro = false }) {
   async function crearCuenta() {
     establecerError('');
     establecerCargando(true);
-    const email = correoCompleto(correo);
+    const email = correo.trim().toLowerCase();
     try {
-      await registrar({
+      const resultado = await registrar({
         nombre: `${nombres.trim()} ${apellidos.trim()}`,
         email,
         password: clave,
         password_confirmation: confirmacion,
       });
       establecerCorreoCreado(email);
+      establecerVerificacionEnviada(Boolean(resultado.correo_verificacion_enviado));
       establecerClave('');
       establecerConfirmacion('');
       establecerPaso(4);
@@ -209,6 +211,7 @@ export function PaginaAcceso({ registro = false }) {
             <MarcaAcceso />
             <h1>Iniciar sesión</h1>
             <p className="acceso-descripcion">Ingresa para continuar con tus incidencias.</p>
+            <Aviso mensaje={ubicacion.state?.mensaje} tipo="exito" />
             <Aviso mensaje={error} tipo="error" />
             <form onSubmit={ingresar} className="formulario acceso-campos" noValidate>
               <CampoCorreo id="ingreso-correo" valor={correo} alCambiar={establecerCorreo} />
@@ -219,6 +222,7 @@ export function PaginaAcceso({ registro = false }) {
               </button>
             </form>
             <div className="acceso-alterno">¿Aún no tienes cuenta? <Link to="/registro">Regístrate aquí</Link></div>
+            <div className="acceso-alterno"><Link to="/olvide-clave">Olvidé mi contraseña</Link></div>
           </>
         )}
 
@@ -280,7 +284,7 @@ export function PaginaAcceso({ registro = false }) {
               <div className="acceso-campos">
                 <dl className="resumen-registro">
                   <div><dt>Nombre</dt><dd>{nombres.trim()} {apellidos.trim()}</dd></div>
-                  <div><dt>Correo</dt><dd>{correoCompleto(correo)}</dd></div>
+                  <div><dt>Correo</dt><dd>{correo.trim().toLowerCase()}</dd></div>
                   <div><dt>Contraseña</dt><dd>••••••••</dd></div>
                 </dl>
                 <div className="acciones-registro">
@@ -306,6 +310,9 @@ export function PaginaAcceso({ registro = false }) {
             <div className="acceso-exito-icono"><Check size={27} aria-hidden="true" /></div>
             <h1>Cuenta creada</h1>
             <p className="acceso-descripcion">Ya puedes iniciar sesión con<br /><strong>{correoCreado}</strong></p>
+            <Aviso tipo={verificacionEnviada ? 'exito' : 'advertencia'} mensaje={verificacionEnviada
+              ? 'Te enviamos un enlace para verificar tu correo. Revisa también la carpeta de spam.'
+              : 'No pudimos enviar el correo de verificación. Inicia sesión y solicita el reenvío desde Mi cuenta.'} />
             <Link className="btn btn-primary acceso-enviar acceso-ir-login" to="/login">
               Ir a iniciar sesión <ArrowRight size={18} aria-hidden="true" />
             </Link>
