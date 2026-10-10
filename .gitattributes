@@ -1,0 +1,4 @@
+# Archivos de despliegue: siempre con saltos de linea de Linux (un Dockerfile con CRLF falla al construirse).
+backend/Dockerfile text eol=lf
+backend/.dockerignore text eol=lf
+backend/railway.json text eol=lf
