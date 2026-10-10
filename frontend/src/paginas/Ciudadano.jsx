@@ -91,7 +91,7 @@ export function NuevoReporte() {
   }
 
   async function buscarSimilares() {
-    if (!formulario.distrito_id || !ubicacion || formulario.titulo.trim().length < 5) return;
+    if (!formulario.distrito_id || !ubicacion || formulario.titulo.trim().length < 4) return;
     establecerBuscando(true);
     try {
       const respuesta = await servicioDatos.similares({ titulo: formulario.titulo,
