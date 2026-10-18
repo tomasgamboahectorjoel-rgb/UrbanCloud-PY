@@ -14,22 +14,24 @@ El backend conserva rutas y formas de respuesta que consume React. La diferencia
 ## Requisitos
 
 - Python 3.12+.
-- PostgreSQL con el esquema de `database/urbancloud_ai.sql` del proyecto original (consultar `MIGRACION_LARAVEL_A_FASTAPI.md` antes de importar o migrar).
+- PostgreSQL con el esquema original de UrbanCloud AI (`urbancloud_ai.sql`, del proyecto original en Laravel). Las tablas `sesiones_renovacion` y `tokens_correo` las crean las migraciones de Alembic.
 - Node.js compatible con Vite 8 y pnpm 11.
 - Acceso a la API real `https://clasificador-incidencias-urbanas.vercel.app/api/clasificar`.
 
 ## Backend local (PowerShell)
 
+Los comandos parten de la raíz del repositorio.
+
 ```powershell
-cd D:\laragon\www\UrbanCloudAI-PY\backend
+cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-En esta copia de trabajo, `backend/.env` ya contiene la conexión PostgreSQL y los parámetros de IA trasladados del Laravel original, además de una clave nueva para FastAPI. Está ignorado por Git y no debe reemplazarse con `.env.example`. La base PostgreSQL compartida ya recibió las migraciones hasta `0003_tokens_correo`; las únicas tablas adicionales son `sesiones_renovacion` y `tokens_correo`. No vuelvas a aplicar el procedimiento inicial de migración. El código no crea tablas automáticamente. No usar la base real para tests automatizados.
+`backend/.env` contiene la conexión PostgreSQL, los parámetros de IA y una clave propia para FastAPI. Está ignorado por Git y se crea a partir de `.env.example`, que lista todas las variables, incluidos los ajustes opcionales del grupo de conexiones (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW` y `DB_POOL_TIMEOUT`). Las tablas adicionales `sesiones_renovacion` y `tokens_correo` se crean con las migraciones de Alembic hasta `0003_tokens_correo` (`alembic upgrade head`, desde `backend/`). El código no crea tablas automáticamente. No usar la base real para tests automatizados.
 
-Para verificar correos y recuperar contraseñas, coloca tu clave de Resend en `backend/.env` como `RESEND_API_KEY=...`. La variable ya está creada y vacía; no pegues la clave en el frontend ni en Git. El remitente configurado es `UrbanCloud AI <verificacion@correo.urbancloudai.site>`. En local, `PUBLIC_FRONTEND_URL=http://127.0.0.1:5173` abre los enlaces en Vite. En producción configura esas mismas variables en el backend desplegado y usa `PUBLIC_FRONTEND_URL=https://www.urbancloudai.site`; en el despliegue de respaldo usa la URL correspondiente de `urbancloudai.online`. Si no hay clave o el proveedor falla, el registro sigue funcionando y avisa que el correo no pudo enviarse.
+Para verificar correos y recuperar contraseñas, coloca tu clave de Resend en `backend/.env` como `RESEND_API_KEY=...`. La variable ya está creada y vacía; no pegues la clave en el frontend ni en Git. El remitente configurado es `UrbanCloud AI <verificacion@correo.urbancloudai.site>`. En local, `PUBLIC_FRONTEND_URL=http://127.0.0.1:5173` abre los enlaces en Vite. En producción configura esas mismas variables en el backend desplegado y usa la dirección HTTPS de la interfaz de cada entorno: `PUBLIC_FRONTEND_URL=https://www.urbancloudai.online` en el principal y `https://www.urbancloudai.site` en el secundario. Si no hay clave o el proveedor falla, el registro sigue funcionando y avisa que el correo no pudo enviarse.
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
@@ -40,7 +42,7 @@ API: `http://127.0.0.1:8000/docs` y `http://127.0.0.1:8000/openapi.json` en desa
 ## Frontend local
 
 ```powershell
-cd D:\laragon\www\UrbanCloudAI-PY\frontend
+cd frontend
 pnpm install --frozen-lockfile
 pnpm dev
 ```
@@ -50,7 +52,7 @@ Vite envía `/api/*` a `http://127.0.0.1:8000` y elimina el prefijo `/api`. Pued
 ## Pruebas
 
 ```powershell
-cd D:\laragon\www\UrbanCloudAI-PY\backend
+cd backend
 .\.venv\Scripts\python.exe -m pytest
 
 cd ..\frontend
@@ -61,6 +63,19 @@ pnpm audit
 
 `pytest` crea SQLite temporal por prueba y sustituye la IA externa por mocks. No llama a PostgreSQL real ni a la IA real. Antes de uso real se necesita una prueba manual de cada rol con una PostgreSQL **de staging**, almacenamiento privado y una llamada controlada a la IA real.
 
+## Despliegue
+
+Hay dos entornos independientes que comparten la misma base PostgreSQL de Supabase y el mismo almacenamiento S3:
+
+- **Principal:** interfaz en Vercel (rama `entorno-principal-frontend`, directorio raíz `frontend`) y servidor en Railway (rama `entorno-principal-backend`, directorio raíz `backend`), construido con `backend/Dockerfile` y `backend/railway.json`, que define `/health` como ruta de salud. Dominio: `https://www.urbancloudai.online`.
+- **Secundario:** interfaz y servidor en Vercel (rama `entorno-respaldo-vercel`). El servidor usa `backend/app/app.py` como punto de entrada y `backend/.python-version` para fijar Python 3.12. Dominio: `https://www.urbancloudai.site`.
+
+`frontend/vercel.json` reenvía `/api/*` al servidor de cada entorno (Railway en el principal, Vercel en el secundario), de modo que interfaz y API comparten dominio y las cookies de sesión viajan sin CORS.
+
+Variables del servidor en producción: `APP_ENV=production`, `DATABASE_URL` (pooler transaccional de Supabase, puerto `6543`, con `?sslmode=require`), `SECRET_KEY` de al menos 32 caracteres, `STORAGE_BACKEND=s3`, `S3_BUCKET`, `S3_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `ANALISIS_IA_URL` y `PUBLIC_FRONTEND_URL` con HTTPS. El servidor no arranca en producción si alguna de esas condiciones de seguridad falla. Con el pooler transaccional se desactivan las sentencias preparadas (`prepare_threshold=None`).
+
+El repositorio no incluye `pyproject.toml` a propósito: Vercel exige una sección `[project]` si lo encuentra, y la configuración de pruebas está en `pytest.ini`.
+
 ## Comportamiento conservado
 
 - Registro público solo Ciudadano; usuarios internos solo Administración.
@@ -70,5 +85,3 @@ pnpm audit
 - Estados, asignaciones, historial, revisión solicitada, notificaciones y auditoría.
 - Evidencias se sirven por API tras verificar rol y pertenencia; nunca se exponen directamente.
 - Mapa Leaflet/OpenStreetMap, geolocalización opcional y selección manual conservados.
-
-Ver `DESPLIEGUE.md` para Vercel y la futura opción Cloud Run.
