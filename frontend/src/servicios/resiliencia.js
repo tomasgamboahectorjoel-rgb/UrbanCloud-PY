@@ -1,6 +1,6 @@
 import { datosDeRespuesta, diagnostico } from './diagnostico.js';
 
-// Capa de resiliencia para las lecturas (GET) hacia la API.
+// Esta capa de resiliencia protege las lecturas (GET) hacia la API.
 // Se desactiva por completo con VITE_RESILIENCIA=false (requiere recompilar).
 // VITE_MAX_PARALELAS cambia el máximo de lecturas simultáneas (por defecto 3).
 // Además evita pedir dos veces lo mismo a la vez y guarda en memoria los catálogos 10 min

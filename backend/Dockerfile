@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Railway define PORT; sin esa variable escucha en 8000.
-# --proxy-headers: el backend corre detras del proxy HTTPS de Railway.
+# Railway define la variable PORT; sin ella, el servidor escucha en el puerto 8000.
+# Se usa --proxy-headers porque el servidor corre detrás del proxy HTTPS de Railway.
 EXPOSE 8000
 CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
