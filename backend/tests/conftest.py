@@ -16,7 +16,7 @@ from app.seguridad.sesiones import hash_clave
 def entorno(tmp_path, monkeypatch):
     url = f"sqlite:///{(tmp_path / 'pruebas.sqlite').as_posix()}"
     motor = create_engine(url, connect_args={"check_same_thread": False})
-    Base.metadata.create_all(motor)  # Exclusivamente la base SQLite temporal de esta prueba.
+    Base.metadata.create_all(motor)  # Esto solo afecta a la base SQLite temporal de esta prueba.
     fabrica = sessionmaker(motor, expire_on_commit=False)
     with fabrica() as db:
         db.add_all([Rol(nombre=nombre) for nombre in
