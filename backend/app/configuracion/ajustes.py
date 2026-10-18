@@ -25,7 +25,7 @@ class Ajustes(BaseModel):
     s3_bucket: str = ""
     s3_endpoint_url: str = ""
     cookie_samesite: str = "lax"
-    # Grupo de conexiones a PostgreSQL (por proceso). Los valores por defecto son los de SQLAlchemy.
+    # El grupo de conexiones a PostgreSQL es por proceso; los valores por defecto son los de SQLAlchemy.
     db_pool_size: int = Field(default=5, ge=1, le=100)
     db_max_overflow: int = Field(default=10, ge=0, le=100)
     db_pool_timeout: int = Field(default=30, ge=1, le=120)
