@@ -1,9 +1,9 @@
-import { MapPin } from 'lucide-react';
+import { LogoMarca } from './LogoMarca';
 
 export function IconoMarca({ compacto = false }) {
   return (
     <span className={`marca-icono${compacto ? ' marca-icono-compacto' : ''}`} aria-hidden="true">
-      <MapPin size={compacto ? 16 : 23} strokeWidth={2.2} />
+      <LogoMarca />
     </span>
   );
 }

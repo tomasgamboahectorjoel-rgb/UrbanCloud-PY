@@ -1,0 +1,261 @@
+/*
+ * Ajustes de la portada y de los diálogos de acceso.
+ * Todo está acotado a .lp-root o .lp-dialog para no afectar a los paneles.
+ */
+
+/* ---------- Responsividad de la portada ---------- */
+
+.lp-root { overflow-x: clip; }
+.lp-root img { max-width: 100%; }
+.lp-brand, .lp-btn, .lp-text-btn { white-space: nowrap; }
+.lp-hero h1, .lp-section-head h2, .lp-example-copy h2 { overflow-wrap: break-word; }
+
+/* Menú de hamburguesa desde tabletas: los enlaces ya no caben junto a los botones. */
+@media (max-width: 900px) {
+  .lp-navlinks {
+    display: none;
+    position: absolute;
+    top: 76px;
+    left: 0;
+    right: 0;
+    padding: 22px 40px;
+    background: #f8faf9;
+    box-shadow: 0 16px 25px #10243c15;
+  }
+  .lp-navlinks.lp-open { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .lp-menu { display: block; min-width: 44px; min-height: 44px; }
+}
+
+@media (min-width: 721px) and (max-width: 1279px) {
+  .lp-flow-grid { grid-template-columns: repeat(6, 1fr); }
+  .lp-flow-grid > * { grid-column: span 2; }
+  .lp-flow-grid > :nth-child(n+4) { grid-column: span 3; }
+}
+
+@media (max-width: 720px) {
+  .lp-navlinks { top: 66px; padding: 22px 18px; }
+  .lp-collage { overflow: hidden; }
+  .lp-float-one { left: 2%; }
+  .lp-float-two { right: 2%; }
+  .lp-float-three { left: 2%; }
+  .lp-float-four { right: 2%; }
+  .lp-hero-actions .lp-btn,
+  .lp-closing-actions .lp-btn { min-height: 48px; }
+  .lp-section-head p, .lp-example-copy p, .lp-review-card { font-size: 16px; }
+}
+
+/* Pantallas muy angostas (320 px): la barra superior debe caber completa. */
+@media (max-width: 400px) {
+  .lp-wrap { width: calc(100% - 28px); }
+  .lp-nav { gap: 8px; }
+  .lp-brand { font-size: 15px; gap: 7px; }
+  .lp-brand img { width: 28px; height: 28px; }
+  .lp-navright { gap: 6px; }
+  .lp-navright .lp-btn-dark { font-size: 10.5px; padding: 10px 11px; }
+  .lp-hero h1 { font-size: clamp(34px, 11vw, 44px); }
+  .lp-float-one, .lp-float-two, .lp-float-three, .lp-float-four { width: 138px; font-size: 11px; padding: 11px; }
+  .lp-float-one { height: 100px; }
+}
+
+/* Contraste del texto secundario. */
+.lp-root .lp-sub, .lp-dialog .lp-sub { color: #566a7a; }
+
+/* ---------- Diálogos de acceso ---------- */
+
+.lp-overlay { align-items: center; }
+.lp-dialog { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); }
+.lp-dialog-acceso { text-align: left; overflow-x: hidden; }
+.lp-dialog-acceso .acceso-descripcion {
+  text-align: center;
+  color: #566a7a;
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0 0 26px;
+}
+.lp-dialog-acceso h2 { margin-top: 22px; }
+.lp-dialog-acceso .lp-close { width: 36px; height: 36px; }
+.lp-dialog-acceso .lp-close:hover { background: #e2eceb; }
+
+.lp-dialog .acceso-campos { display: grid; gap: 16px; text-align: left; }
+.lp-dialog .campo-acceso { display: grid; gap: 7px; margin: 0; min-width: 0; }
+.lp-dialog .campo-acceso > label,
+.lp-dialog .campo-acceso-fila label { color: #273c4d; font-size: 12px; font-weight: 750; }
+.lp-dialog .campo-acceso-fila { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.lp-dialog .acceso-olvide { color: var(--blue); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.lp-dialog .acceso-olvide:hover, .lp-dialog .acceso-alterno a:hover { text-decoration: underline; }
+
+.lp-dialog .control-acceso {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #dce7eb;
+  border-radius: 10px;
+  background: #f6f9fa;
+  color: #7a8c99;
+  transition: border-color .18s, box-shadow .18s;
+}
+.lp-dialog .control-acceso:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px #0879df20; }
+.lp-dialog .control-acceso > svg { flex: none; }
+.lp-dialog .control-acceso input {
+  min-width: 0;
+  flex: 1;
+  width: auto;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+}
+.lp-dialog .control-acceso input::placeholder { color: #8a9ba6; opacity: 1; }
+.lp-dialog .control-acceso input:focus-visible { outline: 0; }
+.lp-dialog .control-acceso-ojo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6c7f8c;
+}
+.lp-dialog .control-acceso-ojo:hover { color: var(--blue); }
+
+.lp-dialog .acceso-dos-columnas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+/* Botón principal con la apariencia de la portada. */
+.lp-dialog .btn {
+  border-radius: 999px;
+  font-weight: 700;
+  min-height: 48px;
+  justify-content: center;
+  gap: 10px;
+}
+.lp-dialog .btn-primary,
+.lp-dialog .acceso-campos .acceso-enviar {
+  width: 100%;
+  background: var(--blue);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: none;
+  transition: transform .25s var(--ease), box-shadow .25s, background .25s;
+}
+.lp-dialog .btn-primary:hover:not(:disabled) { background: #0670cb; transform: translateY(-2px); box-shadow: 0 12px 28px #0879df33; }
+.lp-dialog .btn:disabled { opacity: .6; cursor: not-allowed; }
+.lp-dialog .acceso-ir-login { display: flex; margin-top: 22px; text-decoration: none; }
+
+.lp-dialog .acceso-alterno { margin-top: 20px; text-align: center; color: #566a7a; font-size: 13px; }
+.lp-dialog .acceso-alterno a { color: var(--blue); font-weight: 700; }
+
+/* Registro por pasos. */
+.lp-dialog .etapas-registro {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 18px 0 0;
+}
+.lp-dialog .etapa-registro { position: relative; display: grid; gap: 6px; justify-items: start; color: #566a7a; font-size: 11px; }
+.lp-dialog .etapa-registro:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 34px;
+  right: 6px;
+  top: 12px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--line);
+}
+.lp-dialog .etapa-registro.completa:not(:last-child)::after { background: var(--blue); }
+.lp-dialog .etapa-circulo {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #b5c4cb;
+  border-radius: 50%;
+  background: #fff;
+  color: #566a7a;
+  font-size: 12px;
+}
+.lp-dialog .etapa-registro.actual .etapa-circulo,
+.lp-dialog .etapa-registro.completa .etapa-circulo { border-color: var(--blue); background: var(--blue); color: #fff; }
+.lp-dialog .etapa-nombre { font-weight: 700; }
+
+.lp-dialog .acceso-fortaleza { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.lp-dialog .acceso-fortaleza span { height: 4px; border-radius: 99px; background: var(--line); }
+.lp-dialog .acceso-fortaleza span.activo { background: var(--cyan); }
+.lp-dialog .ayuda-clave { text-align: left; }
+.lp-dialog .ayuda-clave ul { display: grid; gap: 4px; list-style: none; margin: 8px 0 0; padding: 0; }
+.lp-dialog .ayuda-clave li { display: flex; align-items: center; gap: 6px; color: #566a7a; font-size: 12px; }
+.lp-dialog .ayuda-clave li.cumple { color: #0a7a63; }
+
+.lp-dialog .acciones-registro { display: flex; gap: 10px; }
+.lp-dialog .acciones-registro .acceso-enviar { flex: 1; width: auto; }
+.lp-dialog .acceso-volver {
+  flex: 0 0 48px;
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+  border: 1px solid #dce7eb;
+  background: #f6f9fa;
+  color: var(--ink);
+}
+
+.lp-dialog .resumen-registro {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: #eef5f6;
+  text-align: left;
+}
+.lp-dialog .resumen-registro div { display: flex; justify-content: space-between; gap: 12px; }
+.lp-dialog .resumen-registro dt { color: #566a7a; font-size: 12px; }
+.lp-dialog .resumen-registro dd { margin: 0; max-width: 68%; overflow-wrap: anywhere; color: var(--ink); font-size: 13px; font-weight: 750; text-align: right; }
+
+.lp-dialog .acceso-exito-icono {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 20px auto 0;
+  border-radius: 50%;
+  background: #dcf5ef;
+  color: #0a7a63;
+}
+
+/* Avisos y formularios de recuperación (usan .campo y .aviso globales). */
+.lp-dialog .aviso { margin: 0 0 16px; border-radius: 12px; font-size: 13px; text-align: left; }
+.lp-dialog .formulario { display: grid; gap: 16px; margin: 0; }
+.lp-dialog .campo { display: grid; gap: 7px; margin: 0; }
+.lp-dialog .campo > span { color: #273c4d; font-size: 12px; font-weight: 750; }
+.lp-dialog .campo input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #dce7eb;
+  border-radius: 10px;
+  background: #f6f9fa;
+  color: var(--ink);
+  font-size: 14px;
+  outline: none;
+}
+.lp-dialog .campo input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #0879df20; }
+
+/* Diálogo en pantallas pequeñas. */
+@media (max-width: 520px) {
+  .lp-overlay { padding: 12px; }
+  .lp-dialog-acceso { padding: 26px 18px; border-radius: 22px; }
+  .lp-dialog-acceso h2 { font-size: 26px; }
+  .lp-dialog .acceso-dos-columnas { grid-template-columns: 1fr; gap: 16px; }
+  .lp-dialog .control-acceso input, .lp-dialog .campo input { font-size: 16px; }
+}
+@media (max-height: 640px) {
+  .lp-overlay { align-items: flex-start; }
+}
+.lp-dialog-acceso:focus{outline:0}

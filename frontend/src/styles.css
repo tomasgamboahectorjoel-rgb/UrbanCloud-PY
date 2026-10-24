@@ -95,12 +95,18 @@ small,.muted {
   height: 38px;
   flex: none;
   border-radius: 12px;
-  background: linear-gradient(145deg,#4f7cff,#21b8a6);
+  background: #fff;
   display: grid;
   place-items: center;
-  color: white;
-  font-size: 25px;
+  padding: 4px;
   box-shadow: 0 6px 18px #091f2b44;
+}
+
+.marca-icono img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .marca strong {
@@ -1218,6 +1224,8 @@ small,.muted {
   height: 27px;
   border-radius: 8px;
   box-shadow: none;
+  padding: 0;
+  background: transparent;
 }
 
 .membrete {
