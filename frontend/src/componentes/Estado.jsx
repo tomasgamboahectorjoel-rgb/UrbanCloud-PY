@@ -27,5 +27,5 @@ export function Insignia({ estado }) {
 
 export function TarjetasResumen({ elementos }) {
   return <div className="tarjetas-resumen">{elementos.map(([titulo, valor, nota]) =>
-    <div className="tarjeta cifra" key={titulo}><span>{titulo}</span><strong>{valor ?? 0}</strong><small>{nota}</small></div>)}</div>;
+    <div className="tarjeta cifra" key={titulo}><span>{titulo}</span><strong aria-label={valor == null ? 'Dato no disponible' : undefined}>{valor ?? '—'}</strong><small>{nota}</small></div>)}</div>;
 }

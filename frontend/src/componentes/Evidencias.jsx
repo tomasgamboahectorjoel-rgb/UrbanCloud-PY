@@ -26,8 +26,8 @@ function ImagenEvidencia({ evidencia }) {
 
 export function Evidencias({ evidencias = [] }) {
   return <section className="tarjeta padding"><h2>Evidencias</h2>
-    {evidencias.length ? <div className="rejilla-evidencias">{evidencias.map((evidencia) =>
+    {evidencias?.length ? <div className="rejilla-evidencias">{evidencias.map((evidencia) =>
       <ImagenEvidencia key={evidencia.id} evidencia={evidencia} />)}</div>
-      : <p className="vacio-breve">Aún no hay evidencias disponibles.</p>}
+      : <div className="evidencia-vacia"><p className="vacio-breve">Aún no hay evidencias disponibles.</p><p className="descripcion">Aquí se muestran las fotografías asociadas al reporte.</p></div>}
   </section>;
 }

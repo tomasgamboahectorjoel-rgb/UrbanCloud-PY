@@ -1,0 +1,61 @@
+.carga-marca {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: radial-gradient(ellipse at center, #edf6f5 0, #f7fafb 58%);
+  color: #26415b;
+  text-align: center;
+}
+
+.carga-marca-logo {
+  width: 86px;
+  height: 86px;
+  filter: drop-shadow(0 7px 12px #143d5a12);
+  animation: carga-marca-pulso 1.8s ease-in-out infinite;
+}
+
+.carga-marca p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 550;
+  letter-spacing: .01em;
+}
+
+.carga-marca-indicador {
+  display: block;
+  width: 96px;
+  height: 4px;
+  overflow: hidden;
+  background: #d3e2e6;
+  border-radius: 3px;
+}
+
+.carga-marca-indicador::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 100%;
+  border-radius: inherit;
+  background: #08798f;
+  animation: carga-marca-avance 1.4s ease-in-out infinite;
+}
+
+@keyframes carga-marca-pulso {
+  0%, 100% { transform: translateY(0) scale(.96); opacity: .88; }
+  50% { transform: translateY(-3px) scale(1.04); opacity: 1; }
+}
+
+@keyframes carga-marca-avance {
+  0% { transform: translateX(-32px); }
+  100% { transform: translateX(96px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carga-marca-logo { animation: none; }
+  .carga-marca-indicador::after { animation: none; transform: none; margin-inline: auto; }
+}

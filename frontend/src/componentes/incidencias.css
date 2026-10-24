@@ -1,0 +1,43 @@
+.tarjeta.incidencias-listado { border-radius:5px; box-shadow:0 3px 10px #133b4c05; }
+.incidencias-tabla { width:100%; }
+.incidencias-listado .incidencias-tabla td { vertical-align:top; overflow-wrap:anywhere; }
+.incidencias-tabla .incidencias-identidad { min-width:190px; max-width:340px; }
+.incidencias-tabla .incidencias-identidad small { font-size:10px; letter-spacing:.06em; color:#426777; margin-bottom:5px; }
+.incidencias-tabla .incidencias-identidad strong { font-size:13px; line-height:1.5; color:#15354e; }
+.incidencias-tabla .enlace-tabla { display:inline-flex; gap:7px; align-items:center; min-height:36px; white-space:nowrap; }
+.incidencias-solo-lectores { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.incidencia-prioridad { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:600; color:#52677f; line-height:1.5; }
+.incidencia-prioridad>span { flex:none; width:6px; height:6px; background:#8b9da4; border-radius:1px; }
+.incidencia-prioridad-alta>span { background:#a24e39; }
+.incidencia-prioridad-media>span { background:#9a792d; }
+.incidencia-prioridad-baja>span { background:#467465; }
+.incidencias-vacio { padding:34px 25px; background:#fcfcf8; border:1px dashed #c5d1cf; border-radius:5px; }
+.incidencias-vacio h2 { margin:0 0 10px; font-size:19px; }
+.incidencias-vacio p { color:#60758a; font-size:13px; line-height:1.7; margin:0 0 17px; }
+.incidencias-vacio p:only-child { margin:0; }
+.datos-incidencia .cabecera-tarjeta { flex-wrap:wrap; }
+.datos-incidencia .cabecera-tarjeta>div { min-width:0; flex:1 1 220px; }
+.datos-incidencia h2 { overflow-wrap:anywhere; }
+.incidencia-prioridad-resumen { display:flex; align-items:center; gap:12px; margin:0 0 20px; }
+.incidencia-prioridad-resumen>span:first-child { color:#66758a; font-size:11px; }
+.incidencia-historial .linea-tiempo { margin-top:25px; }
+.incidencia-historial .linea-tiempo li { padding-bottom:22px; }
+.incidencia-historial .linea-tiempo li:last-child { padding-bottom:0; }
+.incidencia-historial .linea-tiempo strong { color:#203d55; line-height:1.5; }
+.incidencia-historial .linea-tiempo p { font-size:12px; line-height:1.65; overflow-wrap:anywhere; }
+@media(max-width:900px) {
+  .tarjeta.incidencias-listado { border:0; background:transparent; box-shadow:none; overflow:visible; }
+  .tabla-contenedor .incidencias-tabla { display:block; min-width:0; }
+  .incidencias-tabla thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  .incidencias-tabla tbody { display:grid; gap:14px; }
+  .incidencias-tabla tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid #d7e1df; border-top:2px solid #466b80; border-radius:4px; background:#fffefb; padding:17px; gap:15px 12px; }
+  .incidencias-listado .incidencias-tabla td { display:block; border:0; padding:0; font-size:12px; min-width:0; }
+  .incidencias-tabla td::before { content:attr(data-etiqueta); display:block; font-size:10px; font-weight:600; color:#66758a; margin-bottom:6px; }
+  .incidencias-tabla .incidencias-identidad { grid-column:1/-1; min-width:0; max-width:none; border-bottom:1px solid #e3e9e4; padding-bottom:12px; }
+  .incidencias-tabla .incidencias-identidad::before,.incidencias-tabla .incidencias-enlace::before { content:none; }
+  .incidencias-tabla .incidencias-identidad strong { font-size:15px; }
+  .incidencias-tabla .incidencias-enlace { grid-column:1/-1; text-align:right; }
+  .incidencias-tabla .incidencias-enlace:empty { display:none; }
+  .incidencias-tabla .enlace-tabla { min-height:40px; }
+  .incidencias-tabla .insignia { white-space:normal; }
+}

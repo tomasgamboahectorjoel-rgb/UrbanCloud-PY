@@ -95,12 +95,31 @@ small,.muted {
   height: 38px;
   flex: none;
   border-radius: 12px;
-  background: linear-gradient(145deg,#4f7cff,#21b8a6);
+  background: transparent;
   display: grid;
   place-items: center;
   color: white;
   font-size: 25px;
-  box-shadow: 0 6px 18px #091f2b44;
+  box-shadow: none;
+}
+
+.imagen-marca {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.imagen-marca > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.marca-icono .imagen-marca {
+  width: 86%;
+  height: 86%;
 }
 
 .marca strong {
@@ -1105,9 +1124,16 @@ small,.muted {
   }
 
   .barra-superior {
-    height: 55px;
-    padding: 0 15px;
+    height: auto;
+    min-height: 55px;
+    padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 10px;
     position: relative;
+  }
+
+  .barra-superior .barra-acciones {
+    margin-left: auto;
   }
 
   .membrete {
@@ -1541,6 +1567,13 @@ small,.muted {
   border: 0;
   border-radius: 12px;
   box-shadow: none;
+  background: transparent;
+}
+
+.acceso-registro-marca {
+  width: 38px;
+  height: 40px;
+  margin: 0 auto 14px;
 }
 
 .acceso-formulario h1 {
@@ -1560,10 +1593,12 @@ small,.muted {
 
 .campo-acceso {
   gap: 5px;
+  min-width: 0;
 }
 
 .control-acceso {
   height: 42px;
+  min-width: 0;
   border-radius: 10px;
   padding: 0 11px;
   gap: 9px;
@@ -1571,6 +1606,7 @@ small,.muted {
 
 .control-acceso input {
   font-size: 12px;
+  width: 100%;
 }
 
 .ayuda-acceso {
@@ -1623,14 +1659,14 @@ small,.muted {
   grid-template-columns: repeat(3,minmax(0,1fr));
   gap: 5px;
   margin: 0 0 13px;
-  text-align: left;
+  text-align: center;
 }
 
 .etapa-registro {
   position: relative;
   display: grid;
   gap: 5px;
-  justify-items: start;
+  justify-items: center;
   color: #7185a2;
   font-size: 11px;
 }
@@ -1638,8 +1674,8 @@ small,.muted {
 .etapa-registro:not(:last-child)::after {
   content: "";
   position: absolute;
-  left: 32px;
-  right: 6px;
+  left: calc(50% + 18px);
+  width: calc(100% - 31px);
   top: 11px;
   height: 3px;
   border-radius: 99px;
@@ -1852,3 +1888,11 @@ small,.muted {
 .acceso-simple {
   padding-top: 30px;
 }
+
+/* Permite que los controles se reduzcan dentro de su columna, sin ocultar desbordes. */
+.acceso-dos-columnas > *, .formulario-dos > *, .datos-grid > * { min-width: 0; }
+.acceso-inicio { position: relative; display: inline-flex; align-items: center; gap: 7px; color: #fff; font-size: 13px; margin-bottom: 18px; text-decoration: none; }
+.acceso-inicio:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+.campo { min-width: 0; }
+.campo :is(input, select, textarea) { max-width: 100%; }
+@media(max-width:480px) { .acceso-dos-columnas { grid-template-columns: 1fr; } .control-acceso input { font-size: 16px; } }

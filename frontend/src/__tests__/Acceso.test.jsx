@@ -27,6 +27,20 @@ beforeEach(() => {
 });
 
 describe('acceso y navegación por rol', () => {
+  it('identifica la etapa actual del registro al avanzar por sus tres pasos', () => {
+    render(<MemoryRouter><PaginaAcceso registro /></MemoryRouter>);
+    expect(screen.getByText('Datos').closest('.etapa-registro').getAttribute('aria-current')).toBe('step');
+    fireEvent.change(screen.getByLabelText('Nombres'), { target: { value: 'Ana' } });
+    fireEvent.change(screen.getByLabelText('Apellidos'), { target: { value: 'Pérez' } });
+    fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana@gmail.com' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
+    expect(screen.getByText('Contraseña', { selector: '.etapa-nombre' }).closest('.etapa-registro').getAttribute('aria-current')).toBe('step');
+    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'ClaveSegura123' } });
+    fireEvent.change(screen.getByLabelText('Confirmar contraseña'), { target: { value: 'ClaveSegura123' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
+    expect(screen.getByText('Confirmar').closest('.etapa-registro').getAttribute('aria-current')).toBe('step');
+    expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+  });
   it('inicia sesión y redirige según el rol devuelto por Laravel', async () => {
     sesion.iniciar.mockResolvedValue({ rol: 'Supervisor' });
     render(<MemoryRouter initialEntries={['/login']}><Routes>

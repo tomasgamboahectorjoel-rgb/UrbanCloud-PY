@@ -1,0 +1,76 @@
+.ciudadano-editorial { color:#17344c; }
+.ciudadano-editorial>.encabezado { padding-bottom:24px; border-bottom:1px solid #d7e1df; margin-bottom:28px; }
+.ciudadano-editorial .encabezado h1 { font-size:30px; letter-spacing:-.035em; line-height:1.2; overflow-wrap:anywhere; }
+.ciudadano-editorial .encabezado p { max-width:620px; font-size:13px; line-height:1.7; }
+.ciudadano-editorial .eyebrow { color:#48746d; letter-spacing:.12em; font-size:10px; }
+.ciudadano-editorial .btn { border-radius:5px; font-size:12px; min-height:42px; line-height:1.5; white-space:normal; }
+.ciudadano-editorial .btn-primary { background:#225ecb; box-shadow:0 2px 0 #194b9e; }
+.ciudadano-editorial .tarjeta { border-radius:5px; background:#fffefb; border-color:#d7e1df; box-shadow:0 3px 12px #143a4e05; }
+.ciudadano-resumen { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin:0 0 34px; padding:23px 0; border-top:2px solid #365e73; border-bottom:1px solid #d7e1df; background:#fcfcf8; }
+.ciudadano-resumen>div { padding:0 22px; border-left:1px solid #dce4de; min-width:0; }
+.ciudadano-resumen>div:first-child { border-left:0; }
+.ciudadano-resumen dt { font-size:12px; font-weight:650; }
+.ciudadano-resumen dt a { text-decoration:underline; text-decoration-color:#afc2c6; text-underline-offset:4px; }
+.ciudadano-resumen dd { margin:12px 0 7px; font-size:32px; line-height:1.1; letter-spacing:-.04em; font-weight:700; font-variant-numeric:tabular-nums; }
+.ciudadano-resumen small { display:block; margin-top:8px; color:#60758a; font-size:11px; font-weight:400; letter-spacing:normal; line-height:1.5; }
+.ciudadano-seccion-cabecera { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:18px; margin-bottom:20px; }
+.ciudadano-seccion-cabecera h2 { margin:7px 0 0; font-size:23px; letter-spacing:-.025em; }
+.ciudadano-enlace,.ciudadano-volver { display:inline-flex; align-items:center; gap:8px; color:#23617e; font-size:12px; font-weight:600; min-height:36px; }
+.ciudadano-volver { margin-bottom:15px; }
+.ciudadano-recientes-lista { list-style:none; padding:0; margin:0; border-block:1px solid #d7e1df; background:#fffefb; }
+.ciudadano-recientes-lista li+li { border-top:1px solid #e0e7e2; }
+.ciudadano-recientes-lista li>a { display:grid; grid-template-columns:minmax(0,1fr) auto 18px; align-items:center; gap:20px; padding:21px 20px; }
+.ciudadano-reciente-datos small { font-size:10px; color:#476c7d; letter-spacing:.06em; }
+.ciudadano-reciente-datos h3 { margin:7px 0; font-size:16px; line-height:1.45; overflow-wrap:anywhere; }
+.ciudadano-reciente-datos p { font-size:12px; line-height:1.6; color:#60758a; margin:0; overflow-wrap:anywhere; }
+.ciudadano-reciente-estado { display:grid; gap:10px; justify-items:end; }
+.ciudadano-reciente-estado time { font-size:10px; color:#66758a; }
+.ciudadano-vacio>svg { color:#587d80; margin-bottom:16px; }
+.ciudadano-vacio h2 { line-height:1.4; }
+.ciudadano-lista .filtros { padding:18px; background:#fafbf7; border:1px solid #d7e1df; border-radius:5px; margin-bottom:22px; }
+.ciudadano-lista .filtros .campo { min-width:0; }
+.ciudadano-detalle .distribucion { grid-template-columns:minmax(0,1.5fr) minmax(270px,1fr); gap:22px; }
+.ciudadano-detalle .columna-lateral { gap:22px; }
+.ciudadano-detalle .padding { padding:24px; }
+.ciudadano-detalle .tarjeta h2 { font-size:18px; line-height:1.35; letter-spacing:-.025em; }
+.ciudadano-detalle .datos-incidencia { border-top:3px solid #466b80; }
+.ciudadano-detalle .datos-incidencia .cabecera-tarjeta h2 { font-size:25px; margin-top:9px; }
+.ciudadano-detalle .datos-incidencia .codigo { font-size:11px; letter-spacing:.08em; color:#476c7d; }
+.ciudadano-detalle .descripcion { line-height:1.85; font-size:13px; overflow-wrap:anywhere; }
+.ciudadano-detalle .datos-grid { gap:12px 20px; }
+.ciudadano-detalle .dato { padding:11px 0; background:transparent; border:0; border-bottom:1px solid #e0e7e2; border-radius:0; }
+.ciudadano-detalle .dato small { color:#60758a; font-size:11px; }
+.ciudadano-detalle .dato strong { font-size:12px; font-weight:600; line-height:1.6; }
+.ciudadano-detalle .incidencia-historial { background:#f9faf5; }
+.ciudadano-detalle .incidencia-historial .linea-tiempo small { font-size:11px; margin-top:6px; color:#60758a; }
+.ciudadano-detalle .ciudadano-ultimo-avance p { font-size:13px; line-height:1.75; color:#476477; overflow-wrap:anywhere; }
+.ciudadano-detalle .ciudadano-ubicacion .descripcion { margin-bottom:18px; }
+.ciudadano-detalle .evidencia { border-radius:3px; }
+.ciudadano-detalle .evidencia img { height:220px; }
+.ciudadano-detalle .evidencia-vacia { padding:20px 0 4px; border-top:1px solid #e0e7e2; color:#60758a; }
+.ciudadano-detalle .evidencia-vacia p { font-size:12px; line-height:1.7; margin:0; }
+@media(hover:hover) and (pointer:fine) {
+  .ciudadano-recientes-lista li>a:hover { background:#f1f5ef; }
+  .ciudadano-editorial .btn-primary:hover { background:#194fae; }
+  .ciudadano-editorial .ciudadano-enlace:hover,.ciudadano-editorial .ciudadano-volver:hover { text-decoration:underline; }
+}
+@media(max-width:1050px) { .ciudadano-detalle .distribucion { grid-template-columns:1fr; } }
+@media(max-width:720px) {
+  .ciudadano-editorial .encabezado h1 { font-size:27px; }
+  .ciudadano-resumen { grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px 0; padding:20px 0; }
+  .ciudadano-resumen>div { padding:0 16px; }
+  .ciudadano-resumen>div:nth-child(3) { border-left:0; }
+  .ciudadano-recientes-lista li>a { grid-template-columns:minmax(0,1fr) 18px; gap:13px; padding:18px 16px; }
+  .ciudadano-reciente-datos { grid-column:1/-1; }
+  .ciudadano-reciente-estado { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .ciudadano-reciente-estado time { font-size:11px; }
+  .ciudadano-detalle .padding { padding:20px; }
+  .ciudadano-lista .filtros { padding:15px; }
+}
+@media(max-width:390px) {
+  .ciudadano-resumen dt { font-size:11px; }
+  .ciudadano-resumen small { font-size:10px; }
+  .ciudadano-detalle .padding { padding:17px; }
+  .ciudadano-detalle .datos-incidencia .cabecera-tarjeta h2 { font-size:23px; }
+  .ciudadano-detalle .datos-grid { grid-template-columns:1fr; }
+}

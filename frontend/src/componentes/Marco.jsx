@@ -1,3 +1,4 @@
+import '../workspace/editorial-compartido.css';
 import { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import {

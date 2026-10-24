@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { CirclePlus, LocateFixed, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CirclePlus, FileText, LocateFixed, Search, Sparkles } from 'lucide-react';
 import { usarSesion } from '../contexto/Sesion';
-import { Aviso, Encabezado, Estado, Insignia, TarjetasResumen } from '../componentes/Estado';
+import { Aviso, Encabezado, Estado, Insignia } from '../componentes/Estado';
 import { DatosIncidencia, FiltrosIncidencias, HistorialIncidencia, TablaIncidencias } from '../componentes/Incidencias';
 import { Evidencias } from '../componentes/Evidencias';
 import { Mapa } from '../componentes/Mapa';
@@ -10,28 +10,33 @@ import { Paginacion } from '../componentes/Paginacion';
 import { usarDatos } from '../hooks/usarDatos';
 import { servicioDatos } from '../servicios/servicioDatos';
 import { fecha } from '../utilidades/formato';
+import './ciudadano.css';
+
+function VacioReportes({ seguidas = false }) {
+  return <section className="incidencias-vacio ciudadano-vacio"><FileText size={27} aria-hidden="true" />
+    <h2>{seguidas ? 'Aún no sigues reportes' : 'Todavía no has creado reportes'}</h2>
+    <p>{seguidas ? 'Puedes encontrar reportes cercanos desde el formulario de nuevo reporte y seguir su atención.' : 'Describe el problema, añade una fotografía y señala dónde ocurre. Aquí podrás consultar su avance.'}</p>
+    <Link className="btn btn-secondary" to="/ciudadano/nuevo">{seguidas ? 'Buscar reportes cercanos' : 'Crear mi primer reporte'}<ArrowRight size={16} aria-hidden="true" /></Link>
+  </section>;
+}
 
 export function PanelCiudadano() {
   const { usuario } = usarSesion();
   const { datos, cargando, error, recargar } = usarDatos(servicioDatos.resumen, []);
-  return <><Encabezado seccion="MI ESPACIO" titulo={`Hola, ${usuario.nombre.split(' ')[0]}`}
-    descripcion="Sigue tus reportes y conoce su progreso."
+  return <div className="ciudadano-editorial ciudadano-panel"><Encabezado seccion="MI ESPACIO" titulo={`Hola, ${usuario.nombre.split(' ')[0]}`}
+    descripcion="Tus reportes, sus estados y las novedades de atención."
     accion={<Link className="btn btn-primary" to="/ciudadano/nuevo">
       <CirclePlus size={17} aria-hidden="true" />Nuevo reporte</Link>} />
     <Estado cargando={cargando} error={error} alReintentar={recargar}>
-      <TarjetasResumen elementos={[
-        ['Mis reportes', datos?.total, 'Registrados'], ['En seguimiento', datos?.seguidas, 'Reportes existentes'],
-        ['Resueltos', datos?.resueltas, 'Cerrados'], ['Notificaciones', datos?.no_leidas, 'Sin leer'],
-      ]} />
-      <div className="distribucion"><section className="tarjeta padding"><h2>Reportes recientes</h2>
-        {datos?.recientes?.length ? datos.recientes.map((incidencia) =>
-          <Link className="fila-reporte" key={incidencia.id} to={`/ciudadano/reportes/${incidencia.id}`}>
-            <div><strong>{incidencia.titulo}</strong><small>{incidencia.codigo} · {fecha(incidencia.fecha)}</small></div>
-            <Insignia estado={incidencia.estado} /></Link>) : <p className="vacio-breve">Aún no tienes reportes. Crea el primero.</p>}
-      </section><section className="tarjeta hero"><span className="eyebrow">REPORTAR ES CUIDAR</span>
-        <h2>Ayúdanos a mejorar tu ciudad</h2><p>Reporta un problema urbano con una fotografía y su ubicación.</p>
-        <Link className="btn btn-blanco" to="/ciudadano/nuevo">Crear reporte</Link></section></div>
-    </Estado></>;
+      <dl className="ciudadano-resumen" aria-label="Resumen de tus reportes">{[
+        ['Mis reportes', datos?.total, 'Registrados por ti', '/ciudadano/reportes'], ['En seguimiento', datos?.seguidas, 'Reportes que sigues', '/ciudadano/seguidas'],
+        ['Cerrados', datos?.resueltas, 'De tus reportes', null], ['Notificaciones', datos?.no_leidas, 'Sin leer', '/notificaciones'],
+      ].map(([titulo, valor, nota, ruta]) => <div key={titulo}><dt>{ruta ? <Link to={ruta}>{titulo}</Link> : titulo}</dt><dd><span>{valor ?? 0}</span><small>{nota}</small></dd></div>)}</dl>
+      <section className="ciudadano-recientes"><div className="ciudadano-seccion-cabecera"><div><span className="eyebrow">TU ACTIVIDAD</span><h2>Reportes recientes</h2></div><Link to="/ciudadano/reportes" className="ciudadano-enlace">Ver todos mis reportes <ArrowRight size={16} aria-hidden="true" /></Link></div>
+        {datos?.recientes?.length ? <ol className="ciudadano-recientes-lista">{datos.recientes.map((incidencia) =>
+          <li key={incidencia.id}><Link to={`/ciudadano/reportes/${incidencia.id}`}><div className="ciudadano-reciente-datos"><small>{incidencia.codigo}</small><h3>{incidencia.titulo}</h3><p>{incidencia.distrito || 'Sin distrito'}{incidencia.direccion ? ` · ${incidencia.direccion}` : ''}</p></div><div className="ciudadano-reciente-estado"><Insignia estado={incidencia.estado} /><time dateTime={incidencia.fecha}>{fecha(incidencia.fecha)}</time></div><ArrowRight size={18} aria-hidden="true" /></Link></li>)}</ol> : <VacioReportes />}
+      </section>
+    </Estado></div>;
 }
 
 const emergencias = [
@@ -201,18 +206,22 @@ export function ListaCiudadano({ seguidas = false }) {
     ? servicioDatos.seguidas(aplicados, pagina) : servicioDatos.misReportes(aplicados, pagina),
   [seguidas, pagina, JSON.stringify(aplicados)]);
   const { datos: catalogos } = usarDatos(servicioDatos.catalogos, []);
-  return <><Encabezado seccion="CIUDADANO" titulo={seguidas ? 'En seguimiento' : 'Mis reportes'}
+  function limpiarFiltros() { establecerBuscar(''); establecerEstado('Todos'); establecerPagina(1); establecerAplicados({}); }
+  return <div className="ciudadano-editorial ciudadano-lista"><Encabezado seccion="CIUDADANO" titulo={seguidas ? 'En seguimiento' : 'Mis reportes'}
+    descripcion={seguidas ? 'Consulta la atención de los reportes que sigues.' : 'Consulta tus reportes por código, ubicación o estado.'}
     accion={!seguidas && <Link className="btn btn-primary" to="/ciudadano/nuevo">
       <CirclePlus size={17} aria-hidden="true" />Nuevo reporte</Link>} />
     <FiltrosIncidencias buscar={buscar} alBuscar={establecerBuscar} estado={estado} alEstado={establecerEstado}
       estados={catalogos?.estados?.map((item) => item.nombre) || []}
+      alLimpiar={limpiarFiltros}
       alFiltrar={() => { establecerPagina(1); establecerAplicados({ ...(buscar.trim() && { buscar: buscar.trim() }),
         ...(estado !== 'Todos' && { estado }) }); }} />
     <Estado cargando={cargando} error={error} alReintentar={recargar}>
       <TablaIncidencias incidencias={datos?.data || []}
-        prefijo={seguidas ? '/ciudadano/seguidas' : '/ciudadano/reportes'} />
+        prefijo={seguidas ? '/ciudadano/seguidas' : '/ciudadano/reportes'}
+        filtrosActivos={Object.keys(aplicados).length > 0} alLimpiar={limpiarFiltros} vacio={<VacioReportes seguidas={seguidas} />} />
       <Paginacion datos={datos} alCambiar={establecerPagina} />
-    </Estado></>;
+    </Estado></div>;
 }
 
 export function DetalleCiudadano({ seguida = false }) {
@@ -228,18 +237,18 @@ export function DetalleCiudadano({ seguida = false }) {
     catch (fallo) { establecerMensaje(fallo.message); }
     finally { establecerEnviando(false); }
   }
-  return <><Encabezado seccion="CIUDADANO" titulo="Seguimiento del reporte" />
+  return <div className="ciudadano-editorial ciudadano-detalle"><Link className="ciudadano-volver" to={seguida ? '/ciudadano/seguidas' : '/ciudadano/reportes'}><ArrowLeft size={16} aria-hidden="true" />{seguida ? 'Volver a reportes en seguimiento' : 'Volver a mis reportes'}</Link><Encabezado seccion={seguida ? 'REPORTE EN SEGUIMIENTO' : 'MI REPORTE'} titulo="Seguimiento del reporte" />
     {new URLSearchParams(location.search).get('creado') && <Aviso tipo="exito" mensaje={`Reporte registrado: ${new URLSearchParams(location.search).get('creado')}. Estado: En revisión.`} />}
     <Estado cargando={cargando} error={error} alReintentar={recargar}>
-      <div className="distribucion"><div className="columna-lateral"><DatosIncidencia incidencia={datos} />
-        {datos?.latitud && datos?.longitud && <section className="tarjeta padding"><h2>Ubicación</h2><Mapa latitud={datos.latitud} longitud={datos.longitud} /></section>}
+      <div className="distribucion"><div className="columna-lateral"><DatosIncidencia incidencia={datos} ciudadano />
+        {datos?.latitud != null && datos?.longitud != null && Number.isFinite(Number(datos.latitud)) && Number.isFinite(Number(datos.longitud)) && <section className="tarjeta padding ciudadano-ubicacion"><h2>Ubicación del reporte</h2><p className="descripcion">{[datos.distrito, datos.direccion].filter(Boolean).join(' · ') || 'Ubicación registrada en el mapa.'}</p><Mapa latitud={datos.latitud} longitud={datos.longitud} /></section>}
         <Evidencias evidencias={datos?.evidencias} /></div>
         <div className="columna-lateral"><HistorialIncidencia historial={datos?.historial} />
-          <section className="tarjeta padding"><h2>Último avance</h2><p>{datos?.ultimo_avance || 'Aún no hay avances técnicos.'}</p></section>
+          <section className="tarjeta padding ciudadano-ultimo-avance"><h2>Último avance</h2><p>{datos?.ultimo_avance || 'Aún no hay avances técnicos.'}</p></section>
           {!seguida && datos?.estado === 'Cerrado' && <section className="tarjeta padding"><h2>Solicitar revisión</h2>
             <form onSubmit={pedirRevision} className="formulario"><label className="campo"><span>Motivo</span>
               <textarea required minLength={10} value={motivo} onChange={(evento) => establecerMotivo(evento.target.value)} /></label>
               <button className="btn btn-primary" disabled={enviando}>Enviar solicitud</button></form></section>}
           <Aviso mensaje={mensaje} tipo="info" /></div></div>
-    </Estado></>;
+    </Estado></div>;
 }

@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router';
 import { Marco } from './componentes/Marco';
+import { PantallaCarga } from './componentes/PantallaCarga';
 import { rutasPorRol, usarSesion } from './contexto/Sesion';
 import { PaginaAcceso } from './paginas/Acceso';
+import { Portada, InformacionPublica } from './paginas/Publico';
 import { PanelCiudadano, NuevoReporte, ListaCiudadano, DetalleCiudadano } from './paginas/Ciudadano';
 import { PanelOperador, ListaOperador, DetalleOperador } from './paginas/Operador';
 import { PanelSupervisor, ListaSupervisor, EquipoSupervisor, DetalleSupervisor } from './paginas/Supervisor';
@@ -13,7 +15,7 @@ import { MiCuenta, OlvideClave, RestablecerClave, VerificarCorreo } from './pagi
 export function RutaProtegida({ roles, children }) {
   const { usuario, cargando } = usarSesion();
   const ubicacion = useLocation();
-  if (cargando) return <div className="estado-panel pantalla-carga" role="status">Cargando UrbanCloud AI…</div>;
+  if (cargando) return <PantallaCarga />;
   if (!usuario) return <Navigate to="/login" replace state={{ desde: ubicacion.pathname }} />;
   if (roles && !roles.includes(usuario.rol)) return <Navigate to={rutasPorRol[usuario.rol]} replace />;
   return children;
@@ -21,13 +23,13 @@ export function RutaProtegida({ roles, children }) {
 
 function Inicio() {
   const { usuario, cargando } = usarSesion();
-  if (cargando) return <div className="estado-panel pantalla-carga">Cargando UrbanCloud AI…</div>;
-  return <Navigate to={usuario ? rutasPorRol[usuario.rol] : '/login'} replace />;
+  if (cargando) return <PantallaCarga />;
+  return usuario ? <Navigate to={rutasPorRol[usuario.rol]} replace /> : <Portada />;
 }
 
 function AccesoPublico({ registro }) {
   const { usuario, cargando } = usarSesion();
-  if (cargando) return <div className="estado-panel pantalla-carga">Cargando UrbanCloud AI…</div>;
+  if (cargando) return <PantallaCarga />;
   if (usuario) return <Navigate to={rutasPorRol[usuario.rol]} replace />;
   return <PaginaAcceso key={registro ? 'registro' : 'login'} registro={registro} />;
 }
@@ -35,6 +37,9 @@ function AccesoPublico({ registro }) {
 export function Aplicacion() {
   return <Routes>
     <Route path="/" element={<Inicio />} />
+    <Route path="/privacidad" element={<InformacionPublica tipo="privacidad" />} />
+    <Route path="/terminos" element={<InformacionPublica tipo="terminos" />} />
+    <Route path="/almacenamiento" element={<InformacionPublica tipo="almacenamiento" />} />
     <Route path="/login" element={<AccesoPublico />} />
     <Route path="/registro" element={<AccesoPublico registro />} />
     <Route path="/olvide-clave" element={<OlvideClave />} />

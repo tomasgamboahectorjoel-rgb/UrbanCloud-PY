@@ -39,8 +39,8 @@ export function MiCuenta() {
     finally { establecerEnviando(false); }
   }
 
-  return <><Encabezado seccion="MI CUENTA" titulo="Cuenta y seguridad" />
-    <div className="distribucion"><section className="tarjeta padding"><h2>Cambiar contraseña</h2>
+  return <div className="soporte-pagina cuenta-panel"><Encabezado seccion="MI CUENTA" titulo="Cuenta y seguridad" descripcion="Mantén tus credenciales y tu correo actualizados." />
+    <div className="distribucion"><section className="tarjeta padding"><span className="eyebrow">ACCESO</span><h2>Cambiar contraseña</h2>
       <p className="descripcion">Necesitas conocer tu contraseña actual. Al guardarla, tendrás que iniciar sesión de nuevo.</p>
       <Aviso mensaje={error} tipo="error" /><Aviso mensaje={mensaje} tipo="exito" />
       <form className="formulario" onSubmit={cambiar}>
@@ -51,10 +51,10 @@ export function MiCuenta() {
               autoComplete={campo === 'current_password' ? 'current-password' : 'new-password'}
               value={clave[campo]} onChange={(evento) => establecerClave({ ...clave, [campo]: evento.target.value })} />
           </label>)}
-        <button className="btn btn-primary" disabled={enviando}>Guardar contraseña</button>
+        <button className="btn btn-primary" disabled={enviando}>{enviando ? 'Guardando…' : 'Guardar contraseña'}</button>
       </form>
     </section>
-      {usuario.rol === 'Ciudadano' && <section className="tarjeta padding"><h2>Verificación del correo</h2>
+      {usuario.rol === 'Ciudadano' && <section className="tarjeta padding"><span className="eyebrow">CONTACTO</span><h2>Verificación del correo</h2>
         <p className="descripcion">{usuario.correo}</p>
         <p>{usuario.correo_verificado ? 'Tu correo está verificado.'
           : 'Tu correo aún no está verificado. Verifícalo para poder recuperar tu contraseña si la olvidas.'}</p>
@@ -62,7 +62,7 @@ export function MiCuenta() {
           disabled={enviando} onClick={reenviar}>Reenviar correo de verificación</button>}
       </section>}
     </div>
-  </>;
+  </div>;
 }
 
 export function OlvideClave() {

@@ -2,17 +2,18 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, ArrowRight, Check, CircleCheck, Eye, EyeOff, LockKeyhole,
-  Mail, MapPin, ShieldCheck, UserRound,
+  Mail, ShieldCheck, UserRound,
 } from 'lucide-react';
 import { rutasPorRol, usarSesion } from '../contexto/Sesion';
 import { Aviso } from '../componentes/Estado';
+import { ImagenMarca } from '../componentes/Marca';
 
 const correoValido = /^[A-Za-z0-9_+%-]+(?:\.[A-Za-z0-9_+%-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/i;
 
 function MarcaAcceso() {
   return (
     <div className="acceso-marca-interior">
-      <div className="acceso-emblema" aria-hidden="true"><MapPin size={25} strokeWidth={2.2} /></div>
+      <div className="acceso-emblema" aria-hidden="true"><ImagenMarca /></div>
       <div className="acceso-identidad">UrbanCloud <b>AI</b></div>
     </div>
   );
@@ -62,7 +63,7 @@ function EtapasRegistro({ paso }) {
     <div className="etapas-registro" aria-label={`Registro, paso ${paso} de 3`}>
       {etapas.map((etapa, indice) => (
         <div className={`etapa-registro${paso === indice + 1 ? ' actual' : ''}${paso > indice + 1 ? ' completa' : ''}`}
-          key={etapa}>
+          key={etapa} aria-current={paso === indice + 1 ? 'step' : undefined}>
           <span className="etapa-circulo" aria-hidden="true">
             {paso > indice + 1 ? <Check size={14} /> : indice + 1}
           </span>
@@ -205,6 +206,7 @@ export function PaginaAcceso({ registro = false }) {
 
   return (
     <main className="pagina-acceso">
+      <Link className="acceso-inicio" to="/"><ArrowLeft size={16} aria-hidden="true" /> Volver al inicio</Link>
       <section className={`tarjeta acceso-formulario${registro ? ' acceso-registro' : ''}`}>
         {!registro && (
           <>
@@ -228,6 +230,7 @@ export function PaginaAcceso({ registro = false }) {
 
         {registro && paso < 4 && (
           <>
+            <div className="acceso-registro-marca" aria-hidden="true"><ImagenMarca /></div>
             <EtapasRegistro paso={paso} />
             <h1>{paso === 1 ? 'Crear cuenta' : paso === 2 ? 'Crea tu contraseña' : 'Revisa tus datos'}</h1>
             <p className="acceso-descripcion">

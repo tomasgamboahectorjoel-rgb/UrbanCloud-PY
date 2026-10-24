@@ -1,0 +1,74 @@
+/* El área de trabajo comparte una señalética discreta; acceso y portada conservan su identidad. */
+.aplicacion { background: #f4f5f1; }
+.aplicacion .tarjeta { border-radius: 5px; box-shadow: 0 2px 7px #17344c05; }
+.aplicacion .tarjetas-resumen { gap: 0; border: 1px solid #d7e1df; border-radius: 5px; overflow: hidden; background: #fffefb; }
+.aplicacion .tarjetas-resumen .cifra { border: 0; border-right: 1px solid #d7e1df; border-radius: 0; box-shadow: none; background: transparent; }
+.aplicacion .tarjetas-resumen .cifra:last-child { border-right: 0; }
+.aplicacion .cifra strong { color: #17344c; font-variant-numeric: tabular-nums; }
+.aplicacion .cifra::after { display: none; }
+.aplicacion .enlace-menu { border-radius: 5px; }
+.aplicacion .enlace-menu.activo { box-shadow: inset 3px 0 #225ecb; }
+.aplicacion .usuario-lateral strong { overflow-wrap: anywhere; }
+.aplicacion .barra-superior { background: #fffefb; }
+.aplicacion .barra-superior .membrete { min-width: 0; flex-wrap: wrap; }
+.aplicacion .soporte-pagina { color: #17344c; }
+.aplicacion .soporte-pagina .tarjeta { background: #fffefb; }
+.aplicacion .soporte-pagina h2 { font-size: 1.18rem; line-height: 1.4; letter-spacing: -.025em; }
+.aplicacion .soporte-pagina .descripcion { line-height: 1.65; }
+.aplicacion .soporte-pagina .campo input,
+.aplicacion .soporte-pagina .campo select { border-radius: 5px; }
+.aplicacion .soporte-pagina .btn { border-radius: 5px; box-shadow: none; }
+.aplicacion .soporte-pagina .btn-primary { background: #225ecb; }
+.aplicacion .soporte-pagina .formulario { gap: 18px; }
+.aplicacion .soporte-pagina .formulario > .btn { justify-self: start; }
+.aplicacion .soporte-pagina .filtros { padding: 18px; border: 1px solid #d7e1df; border-radius: 5px; background: #fffefb; }
+.aplicacion .soporte-pagina .filtros > .btn { align-self: end; }
+.aplicacion .admin-accesos { margin-top: 22px; }
+.aplicacion .admin-accesos section { border-top: 3px solid #087e78; }
+.aplicacion .admin-accesos section:last-child { border-top-color: #225ecb; }
+.aplicacion .admin-usuarios { grid-template-columns: minmax(0, 1.65fr) minmax(275px, 1fr); align-items: start; }
+.aplicacion .admin-usuarios > * { min-width: 0; }
+.aplicacion .usuarios-tabla td { vertical-align: top; }
+.aplicacion .usuarios-tabla td:last-child .enlace-tabla { display: flex; margin-bottom: 10px; text-align: left; white-space: normal; }
+.aplicacion .admin-configuracion .confirmacion { display: flex; gap: 10px; align-items: center; padding: 15px 0; border-block: 1px solid #d7e1df; }
+.aplicacion .cuenta-panel .distribucion { align-items: start; }
+.aplicacion .actividad-resumen { padding-block: 4px 16px; font-size: .9rem; }
+.aplicacion .actividad-resumen strong { font-variant-numeric: tabular-nums; }
+.aplicacion .actividad-notificaciones .lista-notificaciones article { display: flex; gap: 24px; align-items: center; padding: 24px; }
+.aplicacion .actividad-notificaciones .lista-notificaciones article > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.aplicacion .actividad-notificaciones .lista-notificaciones article.sin-leer { background: #f1f7fa; border-left: 3px solid #225ecb; }
+.aplicacion .actividad-notificaciones .lista-notificaciones article.leida { background: #fffefb; border-left: 3px solid transparent; opacity: 1; }
+.aplicacion .actividad-notificaciones .lista-notificaciones h2 { margin: 6px 0; font-size: 1rem; }
+.aplicacion .actividad-notificaciones .lista-notificaciones p { line-height: 1.65; margin-block: 6px 12px; }
+.aplicacion .actividad-estado { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .04em; color: #225ecb; }
+.aplicacion .leida .actividad-estado { color: #586b76; }
+.aplicacion .actividad-notificaciones .enlace-tabla { flex-shrink: 0; }
+.aplicacion .soporte-pagina .estado-panel { padding: 36px 24px; line-height: 1.6; }
+.aplicacion .soporte-pagina .estado-panel h2 { margin-block: 10px; }
+.aplicacion :is(button, a, input, select, textarea):focus-visible { outline: 3px solid #225ecb; outline-offset: 3px; }
+@media (max-width: 1100px) {
+  .aplicacion .admin-usuarios { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .aplicacion .lateral { background: #fffefb; border-bottom: 1px solid #d7e1df; }
+  .aplicacion .lateral .marca { color: #17344c; }
+  .aplicacion .lateral .marca b { color: #225ecb; }
+  .aplicacion .lateral .marca small { color: #586b76; }
+  .aplicacion .lateral .enlace-menu { color: #365363; background: #eef2ef; }
+  .aplicacion .lateral .enlace-menu:hover { color: #17344c; background: #e0e9e7; }
+  .aplicacion .lateral .enlace-menu.activo { color: #194fb5; background: #e9efff; }
+}
+@media (max-width: 700px) {
+  .aplicacion .tarjetas-resumen .cifra { border-bottom: 1px solid #d7e1df; }
+  .aplicacion .tarjetas-resumen .cifra:nth-child(even) { border-right: 0; }
+  .aplicacion .soporte-pagina .filtros { padding: 14px; }
+  .aplicacion .actividad-notificaciones .lista-notificaciones article { flex-direction: column; align-items: stretch; gap: 16px; padding: 20px 16px; }
+  .aplicacion .actividad-notificaciones .enlace-tabla { align-self: start; }
+  .aplicacion .barra-superior { gap: 12px; }
+}
+@media (max-width: 400px) {
+  .aplicacion .barra-superior .membrete { max-width: 145px; font-size: .75rem; }
+  .aplicacion .barra-superior .membrete-separador { display: none; }
+  .aplicacion .barra-superior .barra-acciones { gap: 5px; }
+  .aplicacion .barra-superior .btn-salir { padding-inline: 8px; font-size: .75rem; }
+}

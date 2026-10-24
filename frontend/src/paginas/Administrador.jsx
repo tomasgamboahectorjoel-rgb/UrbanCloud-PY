@@ -6,27 +6,28 @@ import { Paginacion } from '../componentes/Paginacion';
 import { usarDatos } from '../hooks/usarDatos';
 import { servicioDatos } from '../servicios/servicioDatos';
 import { fecha } from '../utilidades/formato';
+import { accionAuditoria, DetalleAuditoria } from '../componentes/DetalleAuditoria';
 
 export function PanelAdministrador() {
   const { datos, cargando, error, recargar } = usarDatos(servicioDatos.resumen, []);
-  return <><Encabezado seccion="ADMINISTRADOR" titulo="Administración"
+  return <div className="soporte-pagina"><Encabezado seccion="ADMINISTRADOR" titulo="Administración"
     descripcion="Usuarios, configuración y trazabilidad del sistema." />
     <Estado cargando={cargando} error={error} alReintentar={recargar}>
       <TarjetasResumen elementos={[
         ['Perfiles', datos?.perfiles, 'Usuarios registrados'], ['Categorías', datos?.categorias, 'Activas'],
-        ['Umbral IA', `${datos?.umbral_ia || 0}%`, 'Configuración actual'], ['Auditoría', datos?.auditorias, 'Acciones registradas'],
+        ['Umbral IA', datos?.umbral_ia == null ? null : `${datos.umbral_ia}%`, 'Configuración actual'], ['Auditoría', datos?.auditorias, 'Acciones registradas'],
       ]} />
       <section className="tarjeta padding categorias-activas"><h2>Categorías activas</h2>
         {datos?.categorias_activas?.length
           ? <ul>{datos.categorias_activas.map((nombre) => <li key={nombre}>{nombre}</li>)}</ul>
           : <p className="vacio-breve">No hay categorías activas.</p>}
       </section>
-      <div className="distribucion"><section className="tarjeta padding"><h2>Usuarios y roles</h2>
+      <div className="distribucion admin-accesos"><section className="tarjeta padding"><span className="eyebrow">ACCESOS</span><h2>Usuarios y roles</h2>
         <p className="descripcion">Crea perfiles internos y administra el acceso.</p>
         <Link to="/administrador/usuarios" className="btn btn-primary">Administrar usuarios</Link></section>
-        <section className="tarjeta padding"><h2>Auditoría</h2><p className="descripcion">Consulta las decisiones y cambios registrados.</p>
+        <section className="tarjeta padding"><span className="eyebrow">TRAZABILIDAD</span><h2>Auditoría</h2><p className="descripcion">Consulta las decisiones y cambios registrados.</p>
           <Link to="/administrador/auditoria" className="btn btn-secondary">Ver auditoría</Link></section></div>
-    </Estado></>;
+    </Estado></div>;
 }
 
 function FormularioUsuario({ catalogos, alCompletar }) {
@@ -45,7 +46,7 @@ function FormularioUsuario({ catalogos, alCompletar }) {
     } catch (fallo) { establecerError(fallo.message); }
     finally { establecerEnviando(false); }
   }
-  return <section className="tarjeta padding"><h2>Crear usuario interno</h2><Aviso mensaje={error} tipo="error" />
+  return <section className="tarjeta padding"><h2>Crear usuario interno</h2><p className="descripcion">Define el acceso del equipo. Los ciudadanos se registran desde la página pública.</p><Aviso mensaje={error} tipo="error" />
     <form className="formulario" onSubmit={enviar}>
       <label className="campo"><span>Nombre</span><input required type="text" value={datos.nombre}
         onChange={(evento) => establecerDatos({ ...datos, nombre: evento.target.value })} /></label>
@@ -66,7 +67,7 @@ function FormularioUsuario({ catalogos, alCompletar }) {
         <option value="">Selecciona</option>{catalogos.areas.map((area) =>
           <option key={area.id} value={area.id}>{area.nombre}</option>)}</select></label>}
       <button className="btn btn-primary" disabled={enviando}>
-        <Plus size={17} aria-hidden="true" />Crear usuario</button>
+        <Plus size={17} aria-hidden="true" />{enviando ? 'Creando usuario…' : 'Crear usuario'}</button>
     </form></section>;
 }
 
@@ -98,7 +99,7 @@ export function UsuariosAdministrador() {
       establecerErrorClave('');
     } catch (fallo) { establecerErrorClave(fallo.message); }
   }
-  return <><Encabezado seccion="ADMINISTRADOR" titulo="Usuarios y roles" />
+  return <div className="soporte-pagina"><Encabezado seccion="ADMINISTRADOR" titulo="Usuarios y roles" descripcion="Administra el acceso del equipo y consulta los perfiles registrados." />
     <Aviso mensaje={mensaje} />
     <form className="filtros" onSubmit={(evento) => { evento.preventDefault(); establecerPagina(1); establecerAplicados(Object.fromEntries(
       Object.entries(filtros).filter(([, valor]) => valor !== ''))); }}>
@@ -110,9 +111,11 @@ export function UsuariosAdministrador() {
       <label className="campo"><span>Estado</span><select value={filtros.activo}
         onChange={(evento) => establecerFiltros({ ...filtros, activo: evento.target.value })}>
         <option value="">Todos</option><option value="1">Activo</option><option value="0">Inactivo</option></select></label>
-      <button className="btn btn-secondary"><SlidersHorizontal size={16} aria-hidden="true" />Filtrar</button></form>
-    <div className="distribucion"><div className="columna-lateral"><Estado cargando={cargando} error={error} alReintentar={recargar}>
-      <div className="tarjeta tabla-contenedor"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Área</th><th>Estado</th><th></th></tr></thead>
+      <button className="btn btn-secondary"><SlidersHorizontal size={16} aria-hidden="true" />Filtrar</button><button className="btn btn-secondary" type="button" onClick={() => {
+        establecerFiltros({ buscar: '', rol_id: '', activo: '' }); establecerAplicados({}); establecerPagina(1);
+      }}>Limpiar filtros</button></form>
+    <div className="distribucion admin-usuarios"><div className="columna-lateral"><Estado cargando={cargando} error={error} alReintentar={recargar}>
+      <div className="tarjeta tabla-contenedor usuarios-tabla"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Área</th><th>Estado</th><th></th></tr></thead>
         <tbody>{datos?.data?.map((usuario) => <tr key={usuario.id}><td><strong>{usuario.nombre}</strong><small>{usuario.correo}</small></td>
           <td>{usuario.rol}</td><td>{usuario.area || '—'}</td><td>{usuario.activo ? 'Activo' : 'Inactivo'}</td>
           <td><button className="enlace-tabla" onClick={() => cambiar(usuario)}>
@@ -125,7 +128,7 @@ export function UsuariosAdministrador() {
                 establecerErrorClave('');
                 establecerClaves({ password: '', password_confirmation: '' });
               }}>
-                <KeyRound size={15} aria-hidden="true" /> Restablecer clave</button>}</td></tr>)}</tbody></table></div>
+                <KeyRound size={15} aria-hidden="true" /> Restablecer clave</button>}</td></tr>)}</tbody></table>{!datos?.data?.length && <div className="estado-panel"><h2>No se encontraron usuarios.</h2><p>Prueba otro nombre o limpia los filtros para ver los perfiles disponibles.</p></div>}</div>
       {trabajadorClave && <div className="modal-fondo" onMouseDown={(evento) => {
         if (evento.target === evento.currentTarget) establecerTrabajadorClave(null);
       }}>
@@ -148,7 +151,7 @@ export function UsuariosAdministrador() {
       </div>}
       <Paginacion datos={datos} alCambiar={establecerPagina} />
     </Estado></div>{catalogos && <FormularioUsuario catalogos={catalogos} alCompletar={() => { establecerMensaje('Usuario creado.'); recargar(); }} />}</div>
-  </>;
+  </div>;
 }
 
 export function ConfiguracionAdministrador() {
@@ -164,30 +167,32 @@ export function ConfiguracionAdministrador() {
     try { await servicioDatos.guardarConfiguracion(base); establecerMensaje('Configuración guardada.'); recargar(); }
     catch (fallo) { establecerMensaje(fallo.message); }
   }
-  return <><Encabezado seccion="ADMINISTRADOR" titulo="Configuración" />
+  return <div className="soporte-pagina"><Encabezado seccion="ADMINISTRADOR" titulo="Configuración" descripcion="Criterios de asistencia y seguimiento de las incidencias." />
     <Aviso mensaje={mensaje} /><Estado cargando={cargando} error={error} alReintentar={recargar}>
-      <div className="distribucion"><section className="tarjeta padding"><h2>Reglas del sistema</h2>
+      <div className="distribucion admin-configuracion"><section className="tarjeta padding"><span className="eyebrow">ASISTENCIA IA</span><h2>Reglas del sistema</h2><p className="descripcion">Ajusta los criterios de apoyo al equipo. La revisión humana sigue formando parte del proceso.</p>
         <form className="formulario" onSubmit={guardar}><label className="campo"><span>Umbral de confianza IA (%)</span>
           <input type="number" min="0" max="100" value={base.umbral_confianza_ia}
             onChange={(evento) => establecerValores({ ...base, umbral_confianza_ia: Number(evento.target.value) })} /></label>
           <label className="confirmacion"><input type="checkbox" checked={base.alertas_duplicados_activas}
             onChange={(evento) => establecerValores({ ...base, alertas_duplicados_activas: evento.target.checked })} /> Alertas de duplicados activas</label>
           <button className="btn btn-primary">Guardar</button></form></section>
-        <section className="tarjeta padding"><h2>Estados públicos</h2>
+        <section className="tarjeta padding"><span className="eyebrow">REFERENCIA</span><h2>Estados públicos</h2><p className="descripcion">Estados que permiten seguir el avance de una incidencia. Esta lista es informativa.</p>
           {['En revisión', 'Derivado', 'Asignado', 'En atención', 'Atendido', 'Cerrado', 'Revisión solicitada', 'Impedido']
             .map((estado) => <div className="fila-metrica" key={estado}>{estado}</div>)}</section></div>
-    </Estado></>;
+    </Estado></div>;
 }
 
 export function AuditoriaAdministrador() {
   const [pagina, establecerPagina] = useState(1);
   const { datos, cargando, error, recargar } = usarDatos(() => servicioDatos.auditoria(pagina), [pagina]);
-  return <><Encabezado seccion="ADMINISTRADOR" titulo="Auditoría" />
+  const { datos: catalogos } = usarDatos(servicioDatos.catalogos, []);
+  return <div className="soporte-pagina"><Encabezado seccion="ADMINISTRADOR" titulo="Auditoría" descripcion="Historial de acciones y decisiones registradas por el equipo." />
+    <p className="auditoria-nota">Las referencias usan los catálogos actuales. Si un nombre no está disponible, se muestra su identificador.</p>
     <Estado cargando={cargando} error={error} alReintentar={recargar}>
-      <div className="tarjeta tabla-contenedor"><table><thead><tr><th>Momento</th><th>Acción</th><th>Responsable</th><th>Incidencia</th><th>Detalle</th></tr></thead>
-        <tbody>{datos?.data?.map((item) => <tr key={item.id}><td>{fecha(item.fecha)}</td><td>{item.accion}</td>
+      <div className="tarjeta tabla-contenedor"><table className="auditoria-tabla"><thead><tr><th>Momento</th><th>Acción</th><th>Responsable</th><th>Incidencia</th><th>Detalle</th></tr></thead>
+        <tbody>{datos?.data?.map((item) => <tr key={item.id}><td>{fecha(item.fecha)}</td><td>{accionAuditoria(item.accion)}</td>
           <td>{item.responsable || 'Sistema'}</td><td>{item.incidencia || '—'}</td>
-          <td><small>{item.detalle ? JSON.stringify(item.detalle) : '—'}</small></td></tr>)}</tbody></table></div>
+          <td className="auditoria-celda-detalle"><DetalleAuditoria detalle={item.detalle} catalogos={catalogos} /></td></tr>)}</tbody></table>{!datos?.data?.length && <div className="estado-panel"><h2>Todavía no hay acciones registradas.</h2><p>Las acciones del equipo aparecerán aquí conforme se registren en el sistema.</p></div>}</div>
       <Paginacion datos={datos} alCambiar={establecerPagina} />
-    </Estado></>;
+    </Estado></div>;
 }
