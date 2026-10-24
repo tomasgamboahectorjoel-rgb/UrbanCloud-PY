@@ -1,4 +1,4 @@
-"""Configuracion del motor de base de datos."""
+"""Configuración del motor de base de datos."""
 
 from app.configuracion import base
 from app.configuracion.ajustes import Ajustes

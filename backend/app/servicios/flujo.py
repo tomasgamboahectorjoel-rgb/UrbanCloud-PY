@@ -1,4 +1,7 @@
-"""Transiciones verificadas contra ServicioFlujoIncidencias.php."""
+"""Transiciones de estado de las incidencias, verificadas contra el servicio original.
+
+La referencia es ServicioFlujoIncidencias.php, del proyecto original en Laravel.
+"""
 
 import uuid
 from datetime import timedelta
