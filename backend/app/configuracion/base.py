@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
 
 
 def argumentos_conexion(url: str) -> dict:
-    """Argumentos del conector segun la base de datos.
+    """Devuelve los argumentos del conector según la base de datos.
 
     En PostgreSQL se desactivan las sentencias preparadas del servidor (prepare_threshold=None):
     el pooler transaccional de Supabase multiplexa clientes sobre las mismas conexiones reales y,
@@ -25,7 +25,7 @@ def argumentos_conexion(url: str) -> dict:
 
 
 def opciones_motor(url: str, config) -> dict:
-    """Opciones de create_engine. El tamaño del grupo de conexiones solo aplica a PostgreSQL."""
+    """Devuelve las opciones de create_engine; el grupo de conexiones solo aplica a PostgreSQL."""
     opciones = {"pool_pre_ping": True, "connect_args": argumentos_conexion(url)}
     if not url.startswith("sqlite"):
         opciones.update(pool_size=config.db_pool_size, max_overflow=config.db_max_overflow,
