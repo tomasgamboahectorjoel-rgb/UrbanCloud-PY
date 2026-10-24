@@ -68,6 +68,13 @@ describe('portada y diálogos de acceso', () => {
     expect(screen.getByTestId('ruta').textContent).toBe('/');
   });
 
+  it('cierra con Esc aunque el foco haya pasado a <body> (tras enviar el formulario)', () => {
+    montar('/login');
+    document.activeElement?.blur();
+    fireEvent.keyDown(document.body, { key: 'Escape' });
+    expect(screen.getByTestId('ruta').textContent).toBe('/');
+  });
+
   it('cierra con clic fuera del diálogo y vuelve a /', () => {
     const { container } = montar('/login');
     fireEvent.mouseDown(container.querySelector('.lp-overlay'));
