@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router';
 import { Marco } from './componentes/Marco';
 import { rutasPorRol, usarSesion } from './contexto/Sesion';
 import { PaginaAcceso } from './paginas/Acceso';
+import { LayoutPortada } from './paginas/Portada';
 import { PanelCiudadano, NuevoReporte, ListaCiudadano, DetalleCiudadano } from './paginas/Ciudadano';
 import { PanelOperador, ListaOperador, DetalleOperador } from './paginas/Operador';
 import { PanelSupervisor, ListaSupervisor, EquipoSupervisor, DetalleSupervisor } from './paginas/Supervisor';
@@ -22,7 +23,7 @@ export function RutaProtegida({ roles, children }) {
 function Inicio() {
   const { usuario, cargando } = usarSesion();
   if (cargando) return <div className="estado-panel pantalla-carga">Cargando UrbanCloud AI…</div>;
-  return <Navigate to={usuario ? rutasPorRol[usuario.rol] : '/login'} replace />;
+  return usuario ? <Navigate to={rutasPorRol[usuario.rol]} replace /> : null;
 }
 
 function AccesoPublico({ registro }) {
@@ -34,12 +35,14 @@ function AccesoPublico({ registro }) {
 
 export function Aplicacion() {
   return <Routes>
-    <Route path="/" element={<Inicio />} />
-    <Route path="/login" element={<AccesoPublico />} />
-    <Route path="/registro" element={<AccesoPublico registro />} />
-    <Route path="/olvide-clave" element={<OlvideClave />} />
-    <Route path="/restablecer-clave" element={<RestablecerClave />} />
-    <Route path="/verificar-correo" element={<VerificarCorreo />} />
+    <Route element={<LayoutPortada />}>
+      <Route path="/" element={<Inicio />} />
+      <Route path="/login" element={<AccesoPublico />} />
+      <Route path="/registro" element={<AccesoPublico registro />} />
+      <Route path="/olvide-clave" element={<OlvideClave />} />
+      <Route path="/restablecer-clave" element={<RestablecerClave />} />
+      <Route path="/verificar-correo" element={<VerificarCorreo />} />
+    </Route>
     <Route element={<RutaProtegida><Marco /></RutaProtegida>}>
       <Route path="/notificaciones" element={<PaginaNotificaciones />} />
       <Route path="/cuenta" element={<RutaProtegida roles={['Ciudadano', 'Administrador']}><MiCuenta /></RutaProtegida>} />

@@ -2,21 +2,13 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, ArrowRight, Check, CircleCheck, Eye, EyeOff, LockKeyhole,
-  Mail, MapPin, ShieldCheck, UserRound,
+  Mail, ShieldCheck, UserRound,
 } from 'lucide-react';
 import { rutasPorRol, usarSesion } from '../contexto/Sesion';
 import { Aviso } from '../componentes/Estado';
+import { DialogoAcceso } from '../componentes/DialogoAcceso';
 
 const correoValido = /^[A-Za-z0-9_+%-]+(?:\.[A-Za-z0-9_+%-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/i;
-
-function MarcaAcceso() {
-  return (
-    <div className="acceso-marca-interior">
-      <div className="acceso-emblema" aria-hidden="true"><MapPin size={25} strokeWidth={2.2} /></div>
-      <div className="acceso-identidad">UrbanCloud <b>AI</b></div>
-    </div>
-  );
-}
 
 function CampoCorreo({ id, valor, alCambiar }) {
   return (
@@ -33,11 +25,12 @@ function CampoCorreo({ id, valor, alCambiar }) {
   );
 }
 
-function CampoClave({ id, etiqueta, valor, alCambiar, confirmacion = false }) {
+function CampoClave({ id, etiqueta, valor, alCambiar, confirmacion = false, extra = null }) {
   const [visible, establecerVisible] = useState(false);
   return (
     <div className="campo-acceso">
-      <label htmlFor={id}>{etiqueta}</label>
+      {extra ? <div className="campo-acceso-fila"><label htmlFor={id}>{etiqueta}</label>{extra}</div>
+        : <label htmlFor={id}>{etiqueta}</label>}
       <div className="control-acceso">
         {confirmacion ? <ShieldCheck size={17} aria-hidden="true" />
           : <LockKeyhole size={17} aria-hidden="true" />}
@@ -204,32 +197,30 @@ export function PaginaAcceso({ registro = false }) {
   }
 
   return (
-    <main className="pagina-acceso">
-      <section className={`tarjeta acceso-formulario${registro ? ' acceso-registro' : ''}`}>
+    <DialogoAcceso tituloId="acceso-titulo" ancho={registro ? 'registro' : 'normal'}>
         {!registro && (
           <>
-            <MarcaAcceso />
-            <h1>Iniciar sesión</h1>
+            <h2 id="acceso-titulo">Iniciar sesión</h2>
             <p className="acceso-descripcion">Ingresa para continuar con tus incidencias.</p>
             <Aviso mensaje={ubicacion.state?.mensaje} tipo="exito" />
             <Aviso mensaje={error} tipo="error" />
             <form onSubmit={ingresar} className="formulario acceso-campos" noValidate>
               <CampoCorreo id="ingreso-correo" valor={correo} alCambiar={establecerCorreo} />
-              <CampoClave id="ingreso-clave" etiqueta="Contraseña" valor={clave} alCambiar={establecerClave} />
+              <CampoClave id="ingreso-clave" etiqueta="Contraseña" valor={clave} alCambiar={establecerClave}
+                extra={<Link className="acceso-olvide" to="/olvide-clave">Olvidé mi contraseña</Link>} />
               <button className="btn btn-primary acceso-enviar" type="submit" disabled={cargando}>
                 {cargando ? 'Ingresando…' : 'Ingresar'}
                 {!cargando && <ArrowRight size={18} aria-hidden="true" />}
               </button>
             </form>
             <div className="acceso-alterno">¿Aún no tienes cuenta? <Link to="/registro">Regístrate aquí</Link></div>
-            <div className="acceso-alterno"><Link to="/olvide-clave">Olvidé mi contraseña</Link></div>
           </>
         )}
 
         {registro && paso < 4 && (
           <>
             <EtapasRegistro paso={paso} />
-            <h1>{paso === 1 ? 'Crear cuenta' : paso === 2 ? 'Crea tu contraseña' : 'Revisa tus datos'}</h1>
+            <h2 id="acceso-titulo">{paso === 1 ? 'Crear cuenta' : paso === 2 ? 'Crea tu contraseña' : 'Revisa tus datos'}</h2>
             <p className="acceso-descripcion">
               {paso === 1 ? 'Paso 1: tus datos personales y correo.'
                 : paso === 2 ? 'Paso 2: protege tu cuenta.'
@@ -306,9 +297,8 @@ export function PaginaAcceso({ registro = false }) {
 
         {registro && paso === 4 && (
           <>
-            <MarcaAcceso />
             <div className="acceso-exito-icono"><Check size={27} aria-hidden="true" /></div>
-            <h1>Cuenta creada</h1>
+            <h2 id="acceso-titulo">Cuenta creada</h2>
             <p className="acceso-descripcion">Ya puedes iniciar sesión con<br /><strong>{correoCreado}</strong></p>
             <Aviso tipo={verificacionEnviada ? 'exito' : 'advertencia'} mensaje={verificacionEnviada
               ? 'Te enviamos un enlace para verificar tu correo. Revisa también la carpeta de spam.'
@@ -318,8 +308,6 @@ export function PaginaAcceso({ registro = false }) {
             </Link>
           </>
         )}
-      </section>
-      <small className="acceso-pie">UrbanCloud AI · Chimbote y Nuevo Chimbote</small>
-    </main>
+    </DialogoAcceso>
   );
 }

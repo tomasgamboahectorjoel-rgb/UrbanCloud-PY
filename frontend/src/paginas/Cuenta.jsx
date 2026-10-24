@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { Aviso, Encabezado } from '../componentes/Estado';
+import { DialogoAcceso } from '../componentes/DialogoAcceso';
 import { usarSesion } from '../contexto/Sesion';
 import { servicioHttp } from '../servicios/servicioHttp';
 
@@ -82,8 +83,8 @@ export function OlvideClave() {
     finally { establecerEnviando(false); }
   }
 
-  return <main className="pagina-acceso"><section className="tarjeta acceso-formulario acceso-simple">
-    <h1>Recuperar contraseña</h1>
+  return <DialogoAcceso tituloId="acceso-titulo">
+    <h2 id="acceso-titulo">Recuperar contraseña</h2>
     <p className="acceso-descripcion">Escribe el correo de tu cuenta ciudadana.</p>
     <Aviso mensaje={error} tipo="error" /><Aviso mensaje={mensaje} tipo="exito" />
     <form className="formulario acceso-campos" onSubmit={solicitar}>
@@ -93,7 +94,7 @@ export function OlvideClave() {
     </form>
     <p className="acceso-alterno">La recuperación automática requiere un correo verificado. Si no lo verificaste y perdiste acceso, solicita ayuda al equipo del proyecto.</p>
     <div className="acceso-alterno"><Link to="/login">Volver al ingreso</Link></div>
-  </section></main>;
+  </DialogoAcceso>;
 }
 
 export function RestablecerClave() {
@@ -119,8 +120,8 @@ export function RestablecerClave() {
     finally { establecerEnviando(false); }
   }
 
-  return <main className="pagina-acceso"><section className="tarjeta acceso-formulario acceso-simple">
-    <h1>Restablecer contraseña</h1>
+  return <DialogoAcceso tituloId="acceso-titulo">
+    <h2 id="acceso-titulo">Restablecer contraseña</h2>
     <Aviso mensaje={error} tipo="error" /><Aviso mensaje={mensaje} tipo="exito" />
     {!mensaje && <form className="formulario acceso-campos" onSubmit={confirmar}>
       <label className="campo"><span>Nueva contraseña</span><input type="password" required minLength={8}
@@ -131,7 +132,7 @@ export function RestablecerClave() {
     </form>}
     {!token && <Aviso mensaje="El enlace no es válido." tipo="error" />}
     <div className="acceso-alterno"><Link to="/login">Ir a iniciar sesión</Link></div>
-  </section></main>;
+  </DialogoAcceso>;
 }
 
 export function VerificarCorreo() {
@@ -151,9 +152,9 @@ export function VerificarCorreo() {
       .catch((fallo) => { establecerError(fallo.message); establecerMensaje(''); });
   }, [token, actualizar]);
 
-  return <main className="pagina-acceso"><section className="tarjeta acceso-formulario acceso-simple">
-    <h1>Verificar correo</h1>
+  return <DialogoAcceso tituloId="acceso-titulo">
+    <h2 id="acceso-titulo">Verificar correo</h2>
     <Aviso mensaje={error} tipo="error" /><Aviso mensaje={mensaje} tipo={mensaje === 'Verificando correo…' ? 'info' : 'exito'} />
     <div className="acceso-alterno"><Link to="/login">Ir a iniciar sesión</Link></div>
-  </section></main>;
+  </DialogoAcceso>;
 }
