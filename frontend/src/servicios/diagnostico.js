@@ -52,7 +52,7 @@ export function crearDiagnostico({
     try {
       almacenamiento?.setItem(CLAVE, JSON.stringify(registros));
     } catch {
-      // Sin almacenamiento disponible: el historial solo vive en memoria.
+      // Si no hay almacenamiento disponible, el historial solo vive en memoria.
     }
   }
 
@@ -92,7 +92,7 @@ if (typeof window !== 'undefined') {
       // Copiar puede rechazarse (por ejemplo, si la consola tiene el foco); el texto ya está en la consola.
       navigator.clipboard?.writeText(texto)?.catch(() => {});
     } catch {
-      // Navegador sin portapapeles.
+      // El navegador no tiene portapapeles.
     }
     return diagnostico.listar();
   };

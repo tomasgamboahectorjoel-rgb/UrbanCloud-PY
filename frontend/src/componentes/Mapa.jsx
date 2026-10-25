@@ -34,7 +34,7 @@ export function Mapa({ latitud, longitud, alCambiar, altura = 280, posicionSolic
       funcionCambio.current(nueva[0], nueva[1]);
     });
     return () => { mapa.current?.remove(); mapa.current = null; marcador.current = null; };
-  // Mount map once; selection is handled by its click listener.
+  // El mapa se monta una sola vez; la selección la gestiona su escucha de clics.
   }, []);
 
   useEffect(() => {

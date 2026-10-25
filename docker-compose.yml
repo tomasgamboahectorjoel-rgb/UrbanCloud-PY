@@ -1,0 +1,19 @@
+# PostgreSQL local para desarrollo. Los scripts de database/ se cargan solos la primera vez.
+# Las credenciales coinciden con las de backend/.env.example, así que no hace falta editar nada.
+services:
+  base:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: clave
+      POSTGRES_DB: urbancloud_ai
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./database/01_esquema.sql:/docker-entrypoint-initdb.d/01_esquema.sql:ro
+      - ./database/02_catalogos.sql:/docker-entrypoint-initdb.d/02_catalogos.sql:ro
+      - ./database/03_datos_prueba_sinteticos.sql:/docker-entrypoint-initdb.d/03_datos_prueba_sinteticos.sql:ro
+      - datos_postgres:/var/lib/postgresql/data
+
+volumes:
+  datos_postgres:
