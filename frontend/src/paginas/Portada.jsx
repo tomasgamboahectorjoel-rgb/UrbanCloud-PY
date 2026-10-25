@@ -106,8 +106,10 @@ export function Portada({ children }) {
       if (!reducido && collage) {
         const caja = collage.getBoundingClientRect();
         const avance = Math.max(0, Math.min(1, -caja.top / (caja.height - window.innerHeight || 1)));
+        // En celular el recorrido vertical es corto: el movimiento se reduce para que las tarjetas no salgan de la escena.
+        const escala = typeof matchMedia === 'function' && matchMedia('(max-width: 720px)').matches ? 0.35 : 1;
         collage.querySelectorAll('[data-parallax]').forEach((el) => {
-          el.style.translate = `0 ${(avance - 0.5) * Number(el.dataset.parallax) * 2}px`;
+          el.style.translate = `0 ${(avance - 0.5) * Number(el.dataset.parallax) * 2 * escala}px`;
         });
       }
       pendiente = false;

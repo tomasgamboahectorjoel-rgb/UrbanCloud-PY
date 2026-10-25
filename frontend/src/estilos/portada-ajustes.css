@@ -35,10 +35,6 @@
 @media (max-width: 720px) {
   .lp-navlinks { top: 66px; padding: 22px 18px; }
   .lp-collage { overflow: hidden; }
-  .lp-float-one { left: 2%; }
-  .lp-float-two { right: 2%; }
-  .lp-float-three { left: 2%; }
-  .lp-float-four { right: 2%; }
   .lp-hero-actions .lp-btn,
   .lp-closing-actions .lp-btn { min-height: 48px; }
   .lp-section-head p, .lp-example-copy p, .lp-review-card { font-size: 16px; }
@@ -53,8 +49,22 @@
   .lp-navright { gap: 6px; }
   .lp-navright .lp-btn-dark { font-size: 10.5px; padding: 10px 11px; }
   .lp-hero h1 { font-size: clamp(34px, 11vw, 44px); }
-  .lp-float-one, .lp-float-two, .lp-float-three, .lp-float-four { width: 138px; font-size: 11px; padding: 11px; }
-  .lp-float-one { height: 100px; }
+}
+
+/* Escena del collage en celular. Se conserva la composición (tarjetas inclinadas que se mueven al desplazarse),
+   pero se acomoda para que ninguna tarjeta quede bajo la barra superior ni cortada en los bordes y para que no
+   cubran el logo. La altura usa svh (la parte realmente visible; vh incluye la barra del navegador). */
+@media (max-width: 720px) {
+  .lp-collage { height: 900px; height: max(900px, calc(100svh + 280px)); }
+  .lp-collage-inner { height: calc(100vh - 66px); height: calc(100svh - 66px); }
+  .lp-collage-logo { width: 120px; width: clamp(108px, 17svh, 140px); }
+  .lp-float-one, .lp-float-two, .lp-float-three, .lp-float-four { width: clamp(124px, 37vw, 160px); font-size: 11.5px; padding: 12px; }
+  .lp-float-one { height: auto; aspect-ratio: 4 / 3; top: 7%; left: 5%; padding: 0; }
+  .lp-float-two { top: 11%; right: 5%; }
+  .lp-float-three { bottom: 9%; left: 5%; }
+  .lp-float-four { bottom: 11%; right: 5%; }
+  .lp-float-three strong { font-size: 17px; }
+  .lp-collage-caption { bottom: 14px; }
 }
 
 /* Contraste del texto secundario. */
