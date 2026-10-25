@@ -32,10 +32,16 @@ class Ajustes(BaseModel):
     resend_api_key: str = ""
     email_from: str = "UrbanCloud AI <verificacion@correo.urbancloudai.site>"
     public_frontend_url: str = "http://localhost:5173"
+    # En producción la documentación interactiva (/docs) está desactivada; DOCS_ENABLED=true la activa.
+    docs_enabled: bool = False
 
     @property
     def secure_cookies(self) -> bool:
         return self.app_env == "production"
+
+    @property
+    def docs_visibles(self) -> bool:
+        return self.app_env != "production" or self.docs_enabled
 
 
 @lru_cache
