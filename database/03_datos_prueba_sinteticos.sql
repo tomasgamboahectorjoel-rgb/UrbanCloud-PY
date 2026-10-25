@@ -1,7 +1,7 @@
--- UrbanCloud AI: DATOS SINTÉTICOS DE PRUEBA.
--- Todo lo que crea este script es ficticio: usuarios con correo @urbancloudai.com y sufijo .demo,
--- incidencias con el prefijo [Demo] y rutas de archivo que no existen en el almacenamiento.
--- Ejecutar después de 01_esquema.sql y 02_catalogos.sql. No ejecutar en una base con datos reales.
+-- UrbanCloud AI: CUENTAS DE ACCESO Y DATOS DE EJEMPLO.
+-- Es necesario: crea las cuentas de los cinco perfiles, sin las cuales no se puede iniciar sesión.
+-- Las incidencias llevan el prefijo [Demo] y las rutas de archivo no existen en el almacenamiento.
+-- Ejecutar después de 01_esquema.sql y 02_catalogos.sql, en una base nueva y vacía.
 BEGIN;
 
 -- Usuarios (contraseñas con bcrypt; ver LEEME.md para las credenciales de prueba).

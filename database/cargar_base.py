@@ -1,9 +1,8 @@
-"""Crea la base de datos local y carga el esquema, los catálogos y los datos de prueba.
+"""Crea la base de datos local y carga el esquema, los catálogos y las cuentas de acceso con sus datos de ejemplo.
 
 Uso (desde la raíz del proyecto, con el entorno virtual del backend activo):
 
     python database/cargar_base.py                 # usa DATABASE_URL de backend/.env
-    python database/cargar_base.py --sin-datos     # sin los datos de prueba (03)
 
 Si DATABASE_URL no está definida usa la del archivo backend/.env.example. El script
 se detiene si la base ya tiene tablas, para no modificar una base con datos reales.
@@ -36,9 +35,7 @@ def leer_url() -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--sin-datos", action="store_true", help="omite 03_datos_prueba_sinteticos.sql")
-    args = parser.parse_args()
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
 
     url = leer_url().replace("postgresql+psycopg://", "postgresql://", 1)
     datos = conninfo_to_dict(url)
@@ -58,7 +55,7 @@ def main() -> None:
             "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'").fetchone()[0]
         if tablas:
             sys.exit(f"La base '{base}' ya tiene {tablas} tablas; no se modifica. Usa una base vacía.")
-        for nombre in SCRIPTS[:2] if args.sin_datos else SCRIPTS:
+        for nombre in SCRIPTS:
             conexion.execute((RAIZ / nombre).read_text(encoding="utf-8"))
             print(f"{nombre}: listo")
         resumen = conexion.execute(

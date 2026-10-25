@@ -43,7 +43,7 @@ El sistema usa PostgreSQL alojada en Supabase. Estos pasos crean una propia y ca
 2. Abre el **SQL Editor** del proyecto y ejecuta, uno por uno y en este orden, los archivos de la carpeta `database/`:
    1. `01_esquema.sql`: crea las 20 tablas, con sus claves, restricciones e índices, y activa la seguridad por filas (RLS) en todas, como en el sistema desplegado.
    2. `02_catalogos.sql`: carga los datos base (roles, áreas, categorías, prioridades, estados, distritos y configuración). El sistema no funciona sin ellos.
-   3. `03_datos_prueba_sinteticos.sql`: carga cuentas y reportes ficticios para probar. Es opcional, pero sin él no hay con qué iniciar sesión.
+   3. `03_datos_prueba_sinteticos.sql`: carga las cuentas de los cinco perfiles y reportes de ejemplo. Es necesario: sin él no hay con qué iniciar sesión.
 3. En **Table Editor** comprueba que existen las 20 tablas.
 
 ## 3. Crear el almacenamiento de fotos
