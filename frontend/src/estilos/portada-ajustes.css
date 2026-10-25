@@ -7,6 +7,8 @@
 
 .lp-root { overflow-x: clip; }
 .lp-root img { max-width: 100%; }
+/* El logo del collage es cuadrado (512 x 512). Sin esto, el atributo height="512" lo estira cuando el CSS solo fija el ancho. */
+.lp-collage-logo { height: auto; }
 .lp-brand, .lp-btn, .lp-text-btn { white-space: nowrap; }
 .lp-hero h1, .lp-section-head h2, .lp-example-copy h2 { overflow-wrap: break-word; }
 
@@ -57,7 +59,7 @@
 @media (max-width: 720px) {
   .lp-collage { height: 900px; height: max(900px, calc(100svh + 280px)); }
   .lp-collage-inner { height: calc(100vh - 66px); height: calc(100svh - 66px); }
-  .lp-collage-logo { width: 120px; width: clamp(108px, 17svh, 140px); }
+  .lp-collage-logo { width: clamp(150px, 46vw, 200px); }
   .lp-float-one, .lp-float-two, .lp-float-three, .lp-float-four { width: clamp(124px, 37vw, 160px); font-size: 11.5px; padding: 12px; }
   .lp-float-one { height: auto; aspect-ratio: 4 / 3; top: 7%; left: 5%; padding: 0; }
   .lp-float-two { top: 11%; right: 5%; }
