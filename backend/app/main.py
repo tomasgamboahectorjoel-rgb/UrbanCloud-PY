@@ -10,11 +10,12 @@ from app.configuracion.ajustes import ajustes
 from app.seguridad.sesiones import csrf_valido, token_csrf
 
 config = ajustes()
+# La cabecera X-CSRF-TOKEN se declara como esquema de seguridad para que Swagger pueda enviarla (botón Authorize).
 app = FastAPI(title="UrbanCloud AI", version="1.0.0",
               dependencies=[Depends(APIKeyHeader(name="X-CSRF-TOKEN", auto_error=False))],
-              docs_url=None if config.app_env == "production" else "/docs",
-              redoc_url=None if config.app_env == "production" else "/redoc",
-              openapi_url=None if config.app_env == "production" else "/openapi.json")
+              docs_url="/docs" if config.docs_visibles else None,
+              redoc_url="/redoc" if config.docs_visibles else None,
+              openapi_url="/openapi.json" if config.docs_visibles else None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[origen.strip() for origen in config.frontend_origin.split(",") if origen.strip()],
