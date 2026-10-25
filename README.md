@@ -134,11 +134,11 @@ Mantén las dos terminales abiertas mientras uses el sistema.
 
 ## 6. Cuentas de prueba
 
-El script `03_datos_prueba_sinteticos.sql` crea 10 cuentas ficticias (una por perfil, un segundo ciudadano y un técnico por cada área) y 8 reportes de ejemplo en distintos estados. Las contraseñas de esas cuentas no se publican en el repositorio.
+El script `03_datos_prueba_sinteticos.sql` crea 9 cuentas ficticias (una por perfil y un técnico por cada área) y 8 reportes de ejemplo en distintos estados. Las contraseñas de esas cuentas no se publican en el repositorio.
 
 | Perfil | Correo |
 |---|---|
-| Ciudadano | `ciudadano.demo@urbancloudai.com` y `ciudadano2.demo@urbancloudai.com` |
+| Ciudadano | `ciudadano.demo@urbancloudai.com` |
 | Operador | `operador.demo@urbancloudai.com` |
 | Supervisor | `supervisor.demo@urbancloudai.com` |
 | Personal técnico (una cuenta por área) | `tecnico.alumbrado.demo@`, `tecnico.mantenimiento.demo@`, `tecnico.ambiental.demo@`, `tecnico.areasverdes.demo@` y `tecnico.vias.demo@`, todas con el dominio `urbancloudai.com` |

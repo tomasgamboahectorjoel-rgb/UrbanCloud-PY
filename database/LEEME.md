@@ -10,7 +10,7 @@ Ejecutar en una base vacía, en este orden:
 |---|---|---|
 | 1 | `01_esquema.sql` | Crea las 20 tablas, claves primarias y foráneas, restricciones e índices. |
 | 2 | `02_catalogos.sql` | Carga los datos base: 5 roles, 5 áreas, 6 categorías, 3 prioridades, 8 estados, 2 distritos y 2 configuraciones. Son necesarios para que la aplicación funcione. |
-| 3 | `03_datos_prueba_sinteticos.sql` | Carga las cuentas de acceso de los cinco perfiles y datos de ejemplo: 10 usuarios y 8 incidencias, una en cada estado, con su historial, asignaciones, evidencias y notificaciones. Es necesario: sin él no hay con qué iniciar sesión. |
+| 3 | `03_datos_prueba_sinteticos.sql` | Carga las cuentas de acceso de los cinco perfiles y datos de ejemplo: 9 usuarios y 8 incidencias, una en cada estado, con su historial, asignaciones, evidencias y notificaciones. Es necesario: sin él no hay con qué iniciar sesión. |
 
 Desde la línea de comandos:
 
@@ -24,7 +24,7 @@ En Supabase también sirve pegar cada archivo en el SQL Editor.
 
 ## Verificación
 
-Los tres scripts se cargaron en un esquema temporal de PostgreSQL (el de Supabase del proyecto, aislado de las tablas reales) y dieron: 20 tablas, 5 roles, 8 estados, 10 usuarios, 8 incidencias, 33 cambios de estado y 6 asignaciones. El esquema temporal se eliminó al terminar.
+Los tres scripts se cargaron en un esquema temporal de PostgreSQL (el de Supabase del proyecto, aislado de las tablas reales) y dieron: 20 tablas, 5 roles, 8 estados, 9 usuarios, 8 incidencias, 33 cambios de estado y 6 asignaciones. El esquema temporal se eliminó al terminar.
 
 ## Migraciones Alembic
 
@@ -53,7 +53,6 @@ Está pensado para una base nueva y vacía: no lo ejecutes en una base que ya te
 | Rol | Correo |
 |---|---|
 | Ciudadano | ciudadano.demo@urbancloudai.com |
-| Ciudadano | ciudadano2.demo@urbancloudai.com |
 | Operador | operador.demo@urbancloudai.com |
 | Supervisor | supervisor.demo@urbancloudai.com |
 | Técnico, Alumbrado público | tecnico.alumbrado.demo@urbancloudai.com |
@@ -62,5 +61,3 @@ Está pensado para una base nueva y vacía: no lo ejecutes en una base que ya te
 | Técnico, Áreas verdes | tecnico.areasverdes.demo@urbancloudai.com |
 | Técnico, Vías y obras | tecnico.vias.demo@urbancloudai.com |
 | Administrador | admin@urbancloudai.com |
-
-Las contraseñas no se publican: en el script solo aparece su hash bcrypt. Las nueve cuentas de los perfiles usan las contraseñas de las cuentas de demostración del sistema desplegado. La excepción es `ciudadano2.demo@urbancloudai.com`, que usa una contraseña ficticia, solo válida en una base local creada con estos scripts: `Local#Demo2026`.
