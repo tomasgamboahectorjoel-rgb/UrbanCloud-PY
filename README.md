@@ -142,7 +142,7 @@ El script `03_datos_prueba_sinteticos.sql` crea 10 cuentas ficticias (una por pe
 | Operador | `operador.demo@urbancloudai.com` |
 | Supervisor | `supervisor.demo@urbancloudai.com` |
 | Personal técnico (una cuenta por área) | `tecnico.alumbrado.demo@`, `tecnico.mantenimiento.demo@`, `tecnico.ambiental.demo@`, `tecnico.areasverdes.demo@` y `tecnico.vias.demo@`, todas con el dominio `urbancloudai.com` |
-| Administrador | `admin.demo@urbancloudai.com` |
+| Administrador | `admin@urbancloudai.com` |
 
 También se puede crear una cuenta de ciudadano desde `/registro`. Las cuentas internas las crea el administrador.
 

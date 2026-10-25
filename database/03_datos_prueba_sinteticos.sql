@@ -6,25 +6,25 @@ BEGIN;
 
 -- Usuarios (contraseñas con bcrypt; ver LEEME.md para las credenciales de prueba).
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Ciudadano Demo Uno', 'ciudadano.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Ciudadano'), NULL, true, now(), now());
+VALUES ('Ciudadano Demo Uno', 'ciudadano.demo@urbancloudai.com', now(), '$2b$12$cJpXkQ6EZf6aFq3XsMIQaObR.fNLrpkNaQwKEerbY3nrQTAy.PLoS', (SELECT id FROM roles WHERE nombre = 'Ciudadano'), NULL, true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
 VALUES ('Ciudadano Demo Dos', 'ciudadano2.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Ciudadano'), NULL, true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Operador Demo', 'operador.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Operador'), NULL, true, now(), now());
+VALUES ('Operador Demo', 'operador.demo@urbancloudai.com', now(), '$2b$12$BViMXD8BM6H4GnuRdsCrvems3OdDAzSjr765aI5A8qGf.7FC2o8Ri', (SELECT id FROM roles WHERE nombre = 'Operador'), NULL, true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Supervisor Demo', 'supervisor.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Supervisor'), NULL, true, now(), now());
+VALUES ('Supervisor Demo', 'supervisor.demo@urbancloudai.com', now(), '$2b$12$4HgRXPhvBa4nqM8.v.6dgeUGMPy7m.4jmPJBBRSvxJki2O5XNdUXm', (SELECT id FROM roles WHERE nombre = 'Supervisor'), NULL, true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Técnico Demo Alumbrado', 'tecnico.alumbrado.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Alumbrado público'), true, now(), now());
+VALUES ('Técnico Demo Alumbrado', 'tecnico.alumbrado.demo@urbancloudai.com', now(), '$2b$12$otgi7D2ZB3n4a.j06eOMOuVkzt9k.21bvWEoYqHIOyAc1TzBiUUIq', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Alumbrado público'), true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Técnico Demo Mantenimiento', 'tecnico.mantenimiento.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Mantenimiento'), true, now(), now());
+VALUES ('Técnico Demo Mantenimiento', 'tecnico.mantenimiento.demo@urbancloudai.com', now(), '$2b$12$GrEY.oriafFk2dJtULxJeufL2KCHpCPsVEzcMxLCbmc.dyS06RJVa', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Mantenimiento'), true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Técnico Demo Ambiental', 'tecnico.ambiental.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Servicios ambientales'), true, now(), now());
+VALUES ('Técnico Demo Ambiental', 'tecnico.ambiental.demo@urbancloudai.com', now(), '$2b$12$MNG9Rs8Kk/XLLxogLrCXweZ6rlUq0KoOnSRnNS0PzA4J6xRz6vSm.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Servicios ambientales'), true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Técnico Demo Áreas verdes', 'tecnico.areasverdes.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Áreas verdes'), true, now(), now());
+VALUES ('Técnico Demo Áreas verdes', 'tecnico.areasverdes.demo@urbancloudai.com', now(), '$2b$12$B2pCDAtbg3FAyDw3KMQmheqVSVTL35/m6EsPttYUT/BV4Tx/Qb/j6', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Áreas verdes'), true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Técnico Demo Vías', 'tecnico.vias.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Vías y obras'), true, now(), now());
+VALUES ('Técnico Demo Vías', 'tecnico.vias.demo@urbancloudai.com', now(), '$2b$12$bAtMrrdyALmoPbxcC0HjlO0Hi.3D5ZGzgTJ2kNHOo/KHR4EU99kWW', (SELECT id FROM roles WHERE nombre = 'Personal técnico'), (SELECT id FROM areas WHERE nombre = 'Vías y obras'), true, now(), now());
 INSERT INTO usuarios (nombre, email, email_verified_at, password, rol_id, area_id, activo, created_at, updated_at)
-VALUES ('Administrador Demo', 'admin.demo@urbancloudai.com', now(), '$2b$12$z2/upg.cjm13J/77Vz6f0eE1l.Xkm3kHkyhZeEJqlFY8hRiTUP.l.', (SELECT id FROM roles WHERE nombre = 'Administrador'), NULL, true, now(), now());
+VALUES ('Administrador', 'admin@urbancloudai.com', now(), '$2b$12$Qa90Sj/gwnzfzFMGwbC5WOurEFSoL9t6LTy3ZqLHsNH3Mv/IqEQjm', (SELECT id FROM roles WHERE nombre = 'Administrador'), NULL, true, now(), now());
 
 -- Una validación rechazada por la IA (no genera incidencia).
 INSERT INTO validaciones_reporte (id, ciudadano_id, incidencia_id, titulo, descripcion, ruta_imagen, es_valido, motivo, confianza, created_at, updated_at)

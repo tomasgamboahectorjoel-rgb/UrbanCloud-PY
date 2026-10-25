@@ -61,8 +61,6 @@ No ejecutarlo en una base con datos reales.
 | Técnico, Servicios ambientales | tecnico.ambiental.demo@urbancloudai.com |
 | Técnico, Áreas verdes | tecnico.areasverdes.demo@urbancloudai.com |
 | Técnico, Vías y obras | tecnico.vias.demo@urbancloudai.com |
-| Administrador | admin.demo@urbancloudai.com |
+| Administrador | admin@urbancloudai.com |
 
-Todas usan la misma contraseña ficticia, solo válida en una base local creada con estos scripts: `Local#Demo2026`.
-
-Las contraseñas se guardan con bcrypt; en el script solo aparece el hash.
+Las contraseñas no se publican: en el script solo aparece su hash bcrypt. Las nueve cuentas de los perfiles usan las contraseñas de las cuentas de demostración del sistema desplegado. La excepción es `ciudadano2.demo@urbancloudai.com`, que usa una contraseña ficticia, solo válida en una base local creada con estos scripts: `Local#Demo2026`.
