@@ -1,4 +1,4 @@
-"""Transiciones verificadas contra ServicioFlujoIncidencias.php."""
+"""Transiciones de estado de las incidencias y reglas de cada rol."""
 
 import uuid
 from datetime import timedelta

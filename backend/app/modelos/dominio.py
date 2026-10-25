@@ -1,7 +1,7 @@
-"""Mapeo de las tablas existentes en database/urbancloud_ai.sql.
+"""Mapeo de las tablas de UrbanCloud AI.
 
-No se usa create_all contra la base de datos real. La única tabla nueva es
-sesiones_renovacion, creada por una migración explícita de Alembic.
+El esquema está en database/01_esquema.sql. No se usa create_all contra la base de datos real:
+sesiones_renovacion y tokens_correo también se crean con migraciones explícitas de Alembic.
 """
 
 import uuid
