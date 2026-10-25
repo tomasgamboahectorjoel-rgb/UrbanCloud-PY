@@ -151,27 +151,46 @@ cd ..\frontend
 pnpm test
 ```
 
-Las 20 pruebas del servidor usan una base SQLite temporal y simulan el clasificador, así que no tocan Supabase. Las 110 de la interfaz corren con Vitest.
+Las 23 pruebas del servidor usan una base SQLite temporal y simulan el clasificador, así que no tocan Supabase. Las 110 de la interfaz corren con Vitest.
 
 ## Estructura
 
 - `backend/`: servidor FastAPI (`app/api`, `app/servicios`, `app/modelos`, `app/seguridad`, `app/configuracion`), migraciones en `alembic/` y pruebas en `tests/`.
 - `frontend/`: interfaz React (`src/paginas` por rol, `src/componentes`, `src/servicios`).
-- `database/`: scripts SQL para crear la base.
+- `database/`: scripts SQL para crear la base (`01_esquema.sql`, `02_catalogos.sql` y `03_datos_prueba_sinteticos.sql`) y `cargar_base.py`.
+- `docker-compose.yml`: PostgreSQL local con esos scripts ya cargados.
 
 Las migraciones de Alembic sirven para evolucionar una base que ya existía; una base creada con `database/` ya incluye todas las tablas.
 
-## Ramas y despliegue
+## Despliegue en la nube
 
-Esta rama (`main`) reúne el código completo. El sistema desplegado se publica desde tres ramas de entorno, que difieren de este código solo en archivos de configuración:
+El sistema está publicado con tres servicios:
 
-| Rama | Qué publica | Dónde |
+| Pieza | Servicio | Configuración en el repositorio |
 |---|---|---|
-| `entorno-principal-frontend` | Interfaz del entorno principal | Vercel, <https://www.urbancloudai.online> |
-| `entorno-principal-backend` | Servidor del entorno principal (Docker) | Railway |
-| `entorno-respaldo-vercel` | Interfaz y servidor del entorno secundario | Vercel, <https://www.urbancloudai.site> |
+| Base de datos y fotos | Supabase (PostgreSQL y bucket privado `evidencias`) | `database/` |
+| Servidor (FastAPI) | Railway, con Docker | `backend/Dockerfile` y `backend/railway.json` (ruta de salud `/health`) |
+| Servidor (alternativa) | Vercel | `backend/vercel.json`, `backend/app/app.py` y `backend/.python-version` |
+| Interfaz (React) | Vercel | `frontend/vercel.json` |
 
-Los dos entornos comparten la misma base de datos de Supabase y el mismo bucket de fotos. Al subir cambios a una de esas ramas, el servicio que la sigue publica la nueva versión por su cuenta.
+Hay dos entornos que comparten la misma base de datos y el mismo bucket: el principal (<https://www.urbancloudai.online>, interfaz en Vercel y servidor en Railway) y el secundario (<https://www.urbancloudai.site>, interfaz y servidor en Vercel).
+
+`frontend/vercel.json` reenvía las llamadas `/api/*` al servidor. Así la interfaz y la API comparten dominio y las cookies de sesión viajan sin CORS. Para desplegar con otro servidor, cambia la dirección de destino de esa regla.
+
+Variables del servidor en producción:
+
+| Variable | Valor |
+|---|---|
+| `APP_ENV` | `production` |
+| `DATABASE_URL` | Pooler transaccional de Supabase (puerto `6543`), con `postgresql+psycopg://` y `?sslmode=require` |
+| `SECRET_KEY` | Clave aleatoria de 32 caracteres o más |
+| `STORAGE_BACKEND` | `s3` |
+| `S3_BUCKET`, `S3_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION` | Datos de **S3 Connection** de Supabase |
+| `PUBLIC_FRONTEND_URL` | Dirección HTTPS de la interfaz de ese entorno |
+| `RESEND_API_KEY` | Opcional, para enviar correos |
+| `DOCS_ENABLED` | Opcional. En producción la documentación de la API (`/docs`) está desactivada; con `true` se publica |
+
+El servidor no arranca en producción si no se cumplen las condiciones de seguridad (clave larga, almacenamiento S3, PostgreSQL con psycopg y HTTPS). Con el pooler transaccional se desactivan las sentencias preparadas (`prepare_threshold=None`).
 
 ## Alternativa sin Supabase
 
