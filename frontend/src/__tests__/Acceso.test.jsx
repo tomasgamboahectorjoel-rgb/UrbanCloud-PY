@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 describe('acceso y navegación por rol', () => {
-  it('inicia sesión y redirige según el rol devuelto por Laravel', async () => {
+  it('inicia sesión y redirige según el rol devuelto por el servidor', async () => {
     sesion.iniciar.mockResolvedValue({ rol: 'Supervisor' });
     render(<MemoryRouter initialEntries={['/login']}><Routes>
       <Route path="/login" element={<PaginaAcceso />} />

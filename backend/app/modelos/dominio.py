@@ -1,6 +1,6 @@
-"""Mapeo de las tablas del esquema original de UrbanCloud AI.
+"""Mapeo de las tablas de UrbanCloud AI.
 
-El esquema base está en urbancloud_ai.sql, del proyecto original en Laravel.
+El esquema base está en urbancloud_ai.sql.
 No se usa create_all contra la base de datos real. Las únicas tablas nuevas son
 sesiones_renovacion y tokens_correo, creadas por migraciones explícitas de Alembic.
 """
