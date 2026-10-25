@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi.security import APIKeyHeader
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,6 +11,7 @@ from app.seguridad.sesiones import csrf_valido, token_csrf
 
 config = ajustes()
 app = FastAPI(title="UrbanCloud AI", version="1.0.0",
+              dependencies=[Depends(APIKeyHeader(name="X-CSRF-TOKEN", auto_error=False))],
               docs_url=None if config.app_env == "production" else "/docs",
               redoc_url=None if config.app_env == "production" else "/redoc",
               openapi_url=None if config.app_env == "production" else "/openapi.json")
