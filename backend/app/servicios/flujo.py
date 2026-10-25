@@ -1,7 +1,4 @@
-"""Transiciones de estado de las incidencias, verificadas contra el servicio original.
-
-La referencia es ServicioFlujoIncidencias.php, del proyecto original en Laravel.
-"""
+"""Transiciones de estado de las incidencias y reglas de cada rol."""
 
 import uuid
 from datetime import timedelta
