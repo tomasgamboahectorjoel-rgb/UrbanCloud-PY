@@ -14,7 +14,7 @@ El backend conserva rutas y formas de respuesta que consume React. La diferencia
 ## Requisitos
 
 - Python 3.12+.
-- PostgreSQL con el esquema original de UrbanCloud AI (`urbancloud_ai.sql`, del proyecto original en Laravel). Las tablas `sesiones_renovacion` y `tokens_correo` las crean las migraciones de Alembic.
+- PostgreSQL con el esquema original de UrbanCloud AI (`urbancloud_ai.sql`). Las tablas `sesiones_renovacion` y `tokens_correo` las crean las migraciones de Alembic.
 - Node.js compatible con Vite 8 y pnpm 11.
 - Acceso a la API real `https://clasificador-incidencias-urbanas.vercel.app/api/clasificar`.
 
