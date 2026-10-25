@@ -11,18 +11,6 @@ React + Leaflet  ->  FastAPI  ->  PostgreSQL (Supabase)
 
 La sesión usa cookies `HttpOnly` (acceso de 15 minutos y renovación de 7 días, revocable) y protección CSRF en las escrituras. No se guardan tokens en `localStorage`.
 
-## Perfiles y flujo
-
-| Perfil | Qué hace |
-|---|---|
-| Ciudadano | Reporta una incidencia con foto y ubicación, consulta y sigue sus reportes y los de otros vecinos, y puede pedir la revisión de un reporte cerrado. Es el único perfil con registro público. |
-| Operador | Revisa la clasificación sugerida (categoría, prioridad y área), la confirma o la corrige indicando el motivo, y deriva el reporte. Resuelve las solicitudes de revisión. |
-| Supervisor | Asigna un técnico activo del área, decide qué hacer con los casos impedidos y aprueba el cierre. |
-| Personal técnico | Registra su avance en campo (en camino, en atención, atendido o impedido) con un comentario y, si quiere, una foto. |
-| Administrador | Crea y gestiona las cuentas internas, ajusta el umbral de confianza de la clasificación y consulta la auditoría. |
-
-Un reporte avanza por estos estados: `En revisión`, `Derivado`, `Asignado`, `En atención`, `Atendido` y `Cerrado`. Hay dos excepciones: `Impedido` (el técnico no puede completar el trabajo; el supervisor reasigna o devuelve el caso al operador) y `Revisión solicitada` (el ciudadano pide revisar un cierre; el operador reabre el caso o mantiene el cierre). El clasificador solo sugiere: la clasificación siempre la confirma una persona.
-
 ## Requisitos
 
 - Git.
